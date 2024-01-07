@@ -1,5 +1,23 @@
 import styles from "./button.module.css";
 
-type ButtonProps = {};
+type ButtonProps = {
+  type: "button" | "submit" | "reset";
+  isDisabled?: boolean;
+  text: string;
+  onClick: () => void;
+};
 
-const Button = (props: ButtonProps) => {};
+export const Button = (props: ButtonProps) => {
+  const { type, isDisabled, text, onClick } = props;
+
+  return (
+    <button
+      type={type}
+      disabled={isDisabled}
+      className={styles.btn}
+      onClick={onClick}
+    >
+      {text}
+    </button>
+  );
+};

@@ -1,5 +1,15 @@
 import styles from "./form.module.css";
 
-type FormProps = {};
+type FormProps = {
+  children?: React.ReactNode;
+  onSubmit: () => void;
+};
 
-const Form = (props: FormProps) => {};
+export const Form = (props: FormProps) => {
+  const { children, onSubmit } = props;
+  return (
+    <form className={styles.form} onSubmit={onSubmit}>
+      {children}
+    </form>
+  );
+};

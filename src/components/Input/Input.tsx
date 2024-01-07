@@ -1,5 +1,28 @@
 import styles from "./input.module.css";
 
-type InputProps = {};
+type InputProps = {
+  name?: string;
+  type: React.HTMLInputTypeAttribute;
+  isReadOnly?: boolean;
+  placeholder?: string;
+  label?: string;
+  value: string;
+  onChange?: () => void;
+};
 
-const Input = (props: InputProps) => {};
+export const Input = (props: InputProps) => {
+  const { name, type, isReadOnly, value, onChange } = props;
+  return (
+    <label htmlFor={name} className={styles.container}>
+      <input
+        id={name}
+        name={name}
+        readOnly={isReadOnly}
+        type={type}
+        className={styles.input}
+        value={value}
+        onChange={onChange}
+      />
+    </label>
+  );
+};

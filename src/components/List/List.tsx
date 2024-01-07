@@ -1,5 +1,18 @@
 import styles from "./list.module.css";
 
-type ListProps = {};
+type ListProps = {
+  children?: React.ReactNode;
+  direction?: "row" | "column";
+};
 
-const List = (props: ListProps) => {};
+export const List = (props: ListProps) => {
+  const { children, direction } = props;
+  return (
+    <ul
+      className={styles.list}
+      style={direction && { flexDirection: direction }}
+    >
+      {children}
+    </ul>
+  );
+};
