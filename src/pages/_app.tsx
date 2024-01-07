@@ -5,6 +5,8 @@ import { type AppType } from "next/app";
 import { api } from "@/utils/api";
 
 import "@/styles/globals.css";
+import { MainLayout } from "@/components/Layouts/MainLayout";
+import { ThemeContextProvider } from "@/context/ThemeContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -12,7 +14,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <ThemeContextProvider>
+        <MainLayout>
+          <Component {...pageProps} />
+        </MainLayout>
+      </ThemeContextProvider>
     </SessionProvider>
   );
 };
