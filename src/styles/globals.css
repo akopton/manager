@@ -9,9 +9,13 @@
   --light-red: #bf1363;
 }
 
+* {
+  font-family: "Roboto", sans-serif;
+}
+
 body {
   height: 100vh;
-  width: 100vw;
+  max-height: 100vh;
 }
 
 #__next {

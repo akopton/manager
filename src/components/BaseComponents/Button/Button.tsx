@@ -4,11 +4,12 @@ type ButtonProps = {
   type: "button" | "submit" | "reset";
   isDisabled?: boolean;
   text: string;
+  icon?: React.ReactNode;
   onClick: () => void;
 };
 
 export const Button = (props: ButtonProps) => {
-  const { type, isDisabled, text, onClick } = props;
+  const { type, isDisabled, text, onClick, icon } = props;
 
   return (
     <button
@@ -18,6 +19,7 @@ export const Button = (props: ButtonProps) => {
       onClick={onClick}
     >
       {text}
+      {icon && icon}
     </button>
   );
 };

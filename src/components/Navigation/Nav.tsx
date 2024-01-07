@@ -3,9 +3,12 @@ import { List } from "../BaseComponents/List/List";
 import { ListItem } from "../BaseComponents/ListItem/ListItem";
 import { Button } from "../BaseComponents/Button/Button";
 import { useThemeContext } from "@/hooks/useThemeContext";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export const Nav = () => {
-  const { theme, toggleTheme } = useThemeContext();
+  const { status } = useSession();
+  const { toggleTheme } = useThemeContext();
+
   const navItems = [
     { href: "/", text: "Home" },
     { href: "/notes", text: "Notatki" },
@@ -21,7 +24,7 @@ export const Nav = () => {
           </ListItem>
         ))}
         <ListItem>
-          <Button type="button" text="Wyloguj" onClick={() => {}} />
+          <Button type="button" text={"Wyloguj"} onClick={() => signOut()} />
         </ListItem>
       </List>
     </div>

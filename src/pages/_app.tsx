@@ -1,5 +1,5 @@
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
 import { type AppType } from "next/app";
 
 import { api } from "@/utils/api";
@@ -7,6 +7,18 @@ import { api } from "@/utils/api";
 import "@/styles/globals.css";
 import { MainLayout } from "@/components/Layouts/MainLayout";
 import { ThemeContextProvider } from "@/context/ThemeContext";
+import { useRouter } from "next/router";
+
+const RouteGuard = ({ children }: { children: React.ReactNode }) => {
+  const session = useSession();
+  const router = useRouter();
+
+  if (session.status === "unauthenticated" && router.pathname !== "/login") {
+    router.push("/login");
+  }
+
+  return children;
+};
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -14,11 +26,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <ThemeContextProvider>
-        <MainLayout>
-          <Component {...pageProps} />
-        </MainLayout>
-      </ThemeContextProvider>
+      <RouteGuard>
+        <ThemeContextProvider>
+          <MainLayout>
+            <Component {...pageProps} />
+          </MainLayout>
+        </ThemeContextProvider>
+      </RouteGuard>
     </SessionProvider>
   );
 };
