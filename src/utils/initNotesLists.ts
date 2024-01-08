@@ -31,4 +31,6 @@ export const initNotesLists = async (userId: string) => {
   if (!hasSharedList) {
     await addListToUser(sharedListName, userId);
   }
+
+  return prisma.$disconnect();
 };

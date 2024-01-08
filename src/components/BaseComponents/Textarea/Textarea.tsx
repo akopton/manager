@@ -1,5 +1,11 @@
 import styles from "./textarea.module.css";
 
-type TextareaProps = {};
+type TextareaProps = {
+  onChange: () => void;
+  value: string;
+};
 
-const Textarea = (props: TextareaProps) => {};
+export const Textarea = (props: TextareaProps) => {
+  const { value, onChange } = props;
+  return <textarea value={value} onChange={onChange} />;
+};
