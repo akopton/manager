@@ -2,7 +2,7 @@ import { AddNoteForm } from "@/components/Forms/AddNoteForm";
 import { NotesLayout } from "@/components/Layouts/NotesLayout";
 import Head from "next/head";
 
-export default function NotesPage() {
+export default function AddNotePage() {
   return (
     <>
       <Head>

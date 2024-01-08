@@ -2,7 +2,7 @@ import styles from "./form.module.css";
 
 type FormProps = {
   children?: React.ReactNode;
-  onSubmit: () => void;
+  onSubmit: (e: React.FormEvent) => void;
 };
 
 export const Form = (props: FormProps) => {

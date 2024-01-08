@@ -1,7 +1,7 @@
 import styles from "./textarea.module.css";
 
 type TextareaProps = {
-  onChange: () => void;
+  onChange: (e: React.FormEvent<HTMLTextAreaElement>) => void;
   value: string;
 };
 

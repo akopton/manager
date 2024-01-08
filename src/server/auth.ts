@@ -40,9 +40,7 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: async ({ session, user }) => {
-      await initNotesLists(user.id);
-
+    session: ({ session, user }) => {
       return {
         ...session,
         user: {
