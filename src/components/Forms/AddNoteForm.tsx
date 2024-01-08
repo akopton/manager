@@ -34,6 +34,8 @@ export const AddNoteForm = (props: FormProps) => {
     isError,
   } = api.notes.addNote.useMutation();
 
+  const refetchNotes = api.notes.getLists.useQuery().refetch;
+
   const { data: lists } = api.notes.getLists.useQuery();
 
   const selectOptions = useMemo(() => {
@@ -56,19 +58,18 @@ export const AddNoteForm = (props: FormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addNote({ ...formState });
 
-    if (isLoading) {
-      toast.loading("Adding note...");
-    }
+    await toast.promise(addNote({ ...formState }), {
+      pending: "Zapisywanie...",
+      success: {
+        render({ data }) {
+          return `Pomyślnie dodano notatkę ${data?.title}`;
+        },
+      },
+      error: "Wystąpił błąd w dodawaniu.",
+    });
 
-    if (isSuccess) {
-      toast.success("Added note");
-    }
-
-    if (isError) {
-      toast.error("There was an error adding a note.");
-    }
+    refetchNotes();
   };
 
   return (

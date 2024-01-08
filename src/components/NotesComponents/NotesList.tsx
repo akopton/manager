@@ -58,7 +58,7 @@ export const NotesList = (props: ListProps) => {
           transition: ".3s ease",
         }}
       >
-        {data?.map((note) => <ListItem text={note.title} />)}
+        {data?.map((note) => <ListItem text={note.title} key={note.id} />)}
       </List>
     </>
   );

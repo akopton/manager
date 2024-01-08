@@ -18,7 +18,7 @@ export const Select = (props: SelectProps) => {
 
   const selectValue = useMemo(() => {
     const selectedOption = options?.find((el) => el.value === value);
-    return selectedOption?.label;
+    return selectedOption?.label || "";
   }, [value]);
 
   return (
@@ -31,7 +31,11 @@ export const Select = (props: SelectProps) => {
       />
       <ul className={styles.list}>
         {options?.map((el) => {
-          return <li onClick={() => onChange(el.value)}>{el.label}</li>;
+          return (
+            <li onClick={() => onChange(el.value)} key={el.value}>
+              {el.label}
+            </li>
+          );
         })}
       </ul>
     </div>

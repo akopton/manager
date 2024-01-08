@@ -3,8 +3,21 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const notesRouter = createTRPCRouter({
   addNote: protectedProcedure
-    .input(z.object({}))
-    .mutation(({ ctx, input }) => {}),
+    .input(
+      z.object({ title: z.string(), text: z.string(), listId: z.string() }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { listId, title, text } = input;
+      const note = await ctx.db.note.create({
+        data: {
+          title,
+          text,
+          notesList: { connect: { id: listId } },
+        },
+      });
+
+      return note;
+    }),
 
   addList: protectedProcedure
     .input(z.object({}))
