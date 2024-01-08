@@ -3,13 +3,15 @@ import { Button } from "../BaseComponents/Button/Button";
 import { List } from "../BaseComponents/List/List";
 import { ListItem } from "../BaseComponents/ListItem/ListItem";
 import { useEffect, useState } from "react";
+import { Note } from "@prisma/client";
 
 type ListProps = {
-  data?: any[];
+  title: string;
+  data?: Note[];
 };
 
 export const NotesList = (props: ListProps) => {
-  const { data } = props;
+  const { data, title } = props;
 
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [showScrollbar, setShowScrollbar] = useState<boolean>(false);
@@ -34,7 +36,7 @@ export const NotesList = (props: ListProps) => {
     <>
       <Button
         type="button"
-        text="Lista notatek"
+        text={title}
         icon={
           <div
             style={{
@@ -51,17 +53,12 @@ export const NotesList = (props: ListProps) => {
         direction="column"
         style={{
           overflow: showScrollbar ? "auto" : "hidden",
-          height: isCollapsed ? "0" : "100%",
+          height: isCollapsed ? "0" : "fit-content",
+          maxHeight: isCollapsed ? "0" : "100%",
           transition: ".3s ease",
         }}
       >
-        <ListItem>notatka</ListItem>
-        <ListItem>notatka</ListItem>
-        <ListItem>notatka</ListItem>
-        <ListItem>notatka</ListItem>
-        <ListItem>notatka</ListItem>
-        <ListItem>notatka</ListItem>
-        <ListItem>notatka</ListItem>
+        {data?.map((note) => <ListItem text={note.title} />)}
       </List>
     </>
   );

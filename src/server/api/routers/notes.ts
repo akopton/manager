@@ -10,7 +10,16 @@ export const notesRouter = createTRPCRouter({
     .input(z.object({}))
     .mutation(({ ctx, input }) => {}),
 
-  getLists: protectedProcedure.query(({ ctx }) => {
+  getLists: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
+
+    const lists = await ctx.db.notesList.findMany({
+      where: {
+        ownerId: userId,
+      },
+      include: { notes: true },
+    });
+
+    return lists;
   }),
 });
