@@ -7,7 +7,7 @@ import { api } from "@/utils/api";
 import { Button } from "../BaseComponents/Button/Button";
 import { toast } from "react-toastify";
 
-type FormData = {
+type FormData = Record<string, string> & {
   title: string;
   text: string;
   listId: string;
@@ -27,6 +27,12 @@ export const AddNoteForm = (props: FormProps) => {
     },
   );
 
+  const [errors, setErrors] = useState({
+    title: false,
+    text: false,
+    listId: false,
+  });
+
   const {
     mutateAsync: addNote,
     isLoading,
@@ -44,20 +50,40 @@ export const AddNoteForm = (props: FormProps) => {
 
   const handleTitle = (e: React.FormEvent<HTMLInputElement>) => {
     const title = e.currentTarget.value;
+    setErrors((prev) => ({ ...prev, title: false }));
     setFormState((prev) => ({ ...prev, title }));
   };
 
   const handleText = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const text = e.currentTarget.value;
+    setErrors((prev) => ({ ...prev, text: false }));
     setFormState((prev) => ({ ...prev, text }));
   };
 
   const handleListId = (listId: string) => {
+    setErrors((prev) => ({ ...prev, listId: false }));
     setFormState((prev) => ({ ...prev, listId }));
+  };
+
+  const validateForm = (data: FormData) => {
+    let validatedFields = [];
+    const formFields = Object.keys(data);
+
+    formFields.forEach((field) => {
+      if (!data[field]) {
+        toast.error(`Pole ${field} jest wymagane`);
+        setErrors((prev) => ({ ...prev, [field]: true }));
+        validatedFields.push(field);
+      }
+    });
+
+    return validatedFields.length < 1;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm(formState)) return;
 
     await toast.promise(addNote({ ...formState }), {
       pending: "Zapisywanie...",
@@ -78,9 +104,21 @@ export const AddNoteForm = (props: FormProps) => {
         options={selectOptions}
         onChange={handleListId}
         value={formState.listId}
+        placeholder="Select or search..."
+        searchMode
+        error={errors.listId}
       />
-      <Input type="text" onChange={handleTitle} value={formState.title} />
-      <Textarea onChange={handleText} value={formState.text} />
+      <Input
+        type="text"
+        onChange={handleTitle}
+        value={formState.title}
+        error={errors.title}
+      />
+      <Textarea
+        onChange={handleText}
+        value={formState.text}
+        error={errors.text}
+      />
       <Button type="submit" text="Zapisz" onClick={handleSubmit} />
     </Form>
   );

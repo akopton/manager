@@ -8,10 +8,11 @@ type InputProps = {
   label?: string;
   value: string;
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
+  error?: boolean;
 };
 
 export const Input = (props: InputProps) => {
-  const { name, type, isReadOnly, value, onChange } = props;
+  const { name, type, isReadOnly, value, onChange, error } = props;
   return (
     <label htmlFor={name} className={styles.container}>
       <input
@@ -22,6 +23,7 @@ export const Input = (props: InputProps) => {
         className={styles.input}
         value={value}
         onChange={onChange}
+        style={error ? { border: "2px solid var(--light-red)" } : {}}
       />
     </label>
   );

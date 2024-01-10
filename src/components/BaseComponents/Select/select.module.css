@@ -1,3 +1,57 @@
+.select {
+  position: relative;
+}
+
+.inputWrapper {
+  border: 2px solid var(--light-blue);
+  border-radius: 12px;
+
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .input {
-  color: black;
+  outline: none;
+  background: none;
+  font-size: 1.2rem;
+}
+
+.btn {
+  font-size: 1.5rem;
+}
+
+.list {
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.listItem {
+  padding: 5px 5px;
+  cursor: pointer;
+  position: relative;
+}
+
+.listItem::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--light-blue);
+  transition: 0.3s ease;
+}
+
+.listItem:hover:after {
+  width: 100%;
+  transition: 0.3s ease;
+}
+
+.listItemShim {
+  padding: 5px 5px;
+  position: relative;
 }

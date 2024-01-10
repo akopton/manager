@@ -15,7 +15,7 @@ export const Nav = () => {
   ];
 
   return (
-    <div className="flex h-16 w-full flex-row items-center justify-between border-2 p-4">
+    <div className="flex h-16 w-full flex-row items-center justify-between border-b-2 p-4">
       <Button type="button" text="Toggle theme" onClick={toggleTheme} />
       <List direction="row" gap="20px" style={{ justifyContent: "flex-end" }}>
         {navItems.map((item) => (
