@@ -24,6 +24,7 @@ export const Select = (props: SelectProps) => {
   const { options, searchMode, onChange, value, placeholder, error } = props;
 
   useEffect(() => {
+    if (!value) setSelectValue("");
     const selectedOption = options?.find((el) => el.value === value);
     if (selectedOption?.label) {
       setSelectValue(selectedOption.label);
