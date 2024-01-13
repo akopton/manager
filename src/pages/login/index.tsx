@@ -1,8 +1,16 @@
 import { Button } from "@/components/BaseComponents/Button/Button";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const session = useSession();
+
+  if (session.status === "authenticated" && router.pathname === "/login") {
+    router.push("/");
+  }
+
   return (
     <>
       <Head>
