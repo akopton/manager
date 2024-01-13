@@ -19,9 +19,21 @@ export const notesRouter = createTRPCRouter({
       return note;
     }),
 
-  addList: protectedProcedure
-    .input(z.object({}))
-    .mutation(({ ctx, input }) => {}),
+  addList: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
+    const userId = ctx.session.user.id;
+    const list = ctx.db.notesList.create({
+      data: {
+        name: input,
+        owner: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+
+    return list;
+  }),
 
   getLists: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
