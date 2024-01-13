@@ -61,11 +61,11 @@ model VerificationToken {
 }
 
 model Note {
-    id          String     @id @default(cuid())
-    title       String
-    text        String
-    notesList   NotesList? @relation(fields: [notesListId], references: [id])
-    notesListId String?
+    id     String    @id @default(cuid())
+    title  String
+    text   String
+    list   NotesList @relation(fields: [listId], references: [id])
+    listId String
 }
 
 model NotesList {
