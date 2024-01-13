@@ -54,9 +54,9 @@ export const NotesList = (props: ListProps) => {
         direction="column"
         style={{
           overflow: showScrollbar ? "auto" : "hidden",
-          height: isCollapsed ? "0" : "fit-content",
+          height: "fit-content",
           maxHeight: isCollapsed ? "0" : "100%",
-          transition: ".3s ease",
+          transition: "max-height .3s ease",
         }}
       >
         {data?.map((note) => (
