@@ -4,6 +4,7 @@ import { List } from "../BaseComponents/List/List";
 import { ListItem } from "../BaseComponents/ListItem/ListItem";
 import { useEffect, useState } from "react";
 import { Note } from "@prisma/client";
+import Link from "next/link";
 
 type ListProps = {
   title: string;
@@ -58,7 +59,11 @@ export const NotesList = (props: ListProps) => {
           transition: ".3s ease",
         }}
       >
-        {data?.map((note) => <ListItem text={note.title} key={note.id} />)}
+        {data?.map((note) => (
+          <ListItem key={note.id}>
+            <Link href={`/notes/${note.id}`}>{note.title}</Link>
+          </ListItem>
+        ))}
       </List>
     </>
   );

@@ -12,7 +12,7 @@ export const notesRouter = createTRPCRouter({
         data: {
           title,
           text,
-          notesList: { connect: { id: listId } },
+          list: { connect: { id: listId } },
         },
       });
 
@@ -34,5 +34,15 @@ export const notesRouter = createTRPCRouter({
     });
 
     return lists;
+  }),
+
+  getNoteById: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+    const note = ctx.db.note.findUnique({
+      where: {
+        id: input,
+      },
+    });
+
+    return note;
   }),
 });
