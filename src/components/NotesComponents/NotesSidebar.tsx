@@ -1,16 +1,43 @@
-import Link from "next/link";
 import { NotesList } from "../NotesComponents/NotesList";
-import { api } from "@/utils/api";
+import { Button } from "../BaseComponents/Button/Button";
+import { AddNotesListForm } from "../Forms/AddNotesListForm";
+import { useNotesLists } from "@/hooks/useNotesLists";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 export const NotesSidebar = () => {
-  const { data: lists } = api.notes.getLists.useQuery();
+  const router = useRouter();
+  const { lists, openList } = useNotesLists();
+  const [isFormOpened, setIsFormOpened] = useState(false);
+
+  const openForm = () => {
+    setIsFormOpened((prev) => !prev);
+  };
 
   return (
-    <aside className="flex h-full flex-col items-start">
-      <Link href={"/notes/add-new"}>add new</Link>
-      {lists?.map((list) => (
-        <NotesList title={list.name} data={list.notes} key={list.id} />
-      ))}
+    <aside className="flex h-full flex-col items-start ">
+      <div className="flex w-full items-center justify-between">
+        <Button type="button" text="Dodaj listę" onClick={openForm} />
+        <Button
+          type="button"
+          text="Dodaj notatkę"
+          onClick={() => router.push("/notes/add-new")}
+        />
+      </div>
+      {isFormOpened && (
+        <AddNotesListForm closeForm={() => setIsFormOpened(false)} />
+      )}
+      {lists &&
+        lists.map((list) => (
+          <NotesList
+            id={list.id}
+            title={list.name}
+            data={list.notes}
+            key={list.id}
+            openList={openList}
+            isOpened={list.isOpened}
+          />
+        ))}
     </aside>
   );
 };
