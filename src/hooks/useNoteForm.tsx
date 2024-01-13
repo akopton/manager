@@ -1,23 +1,35 @@
 import { toast } from "react-toastify";
 import { useFormReducer } from "./useFormReducer";
 import { api } from "@/utils/api";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export type FormState = {
-  [key: string]: { value: string; error: boolean };
   title: { value: string; error: boolean };
   text: { value: string; error: boolean };
   listId: { value: string; error: boolean };
 };
 
-export const useNoteForm = () => {
+export const useNoteForm = (initialData: FormState | undefined) => {
   const [state, dispatch] = useFormReducer();
-  const {
-    mutateAsync: addNote,
-    isLoading,
-    isSuccess,
-    isError,
-  } = api.notes.addNote.useMutation();
+  const { mutateAsync: addNote } = api.notes.addNote.useMutation();
+
+  const initForm = (data: FormState) => {
+    Object.keys(data).forEach((key) => {
+      dispatch({
+        type: "INIT_FORM",
+        payload: {
+          field: key as keyof FormState,
+          value: data[key as keyof FormState].value,
+        },
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (initialData) {
+      initForm(initialData);
+    }
+  }, [initialData]);
 
   const refetchNotes = api.notes.getLists.useQuery().refetch;
 
@@ -27,50 +39,33 @@ export const useNoteForm = () => {
     return lists?.map((el) => ({ value: el.id, label: el.name }));
   }, [lists]);
 
-  const setFieldError = (field: string, value: boolean) =>
-    dispatch({
-      type: `SET_${field.toUpperCase()}`,
-      payload: { property: "error", value },
-    });
-
   const validateForm = (data: FormState) => {
     let validatedFields = [];
     const formFields = Object.keys(data);
 
     formFields.forEach((field) => {
-      if (!data[field]?.value) {
+      if (!data[field as keyof FormState].value) {
         validatedFields.push(field);
-        setFieldError(field, true);
+        handleFieldError(field as keyof FormState, true);
+        toast.error(`Pole ${field} jest wymagane!`);
       }
     });
 
     return validatedFields.length < 1;
   };
 
-  const handleTitle = (e: React.FormEvent<HTMLInputElement>) => {
-    const title = e.currentTarget.value;
-    setFieldError("title", false);
-    dispatch({
-      type: "SET_TITLE",
-      payload: { property: "value", value: title },
-    });
+  const resetForm = () => {
+    handleFieldValue("title", "");
+    handleFieldValue("text", "");
+    handleFieldValue("listId", "");
   };
 
-  const handleText = (e: React.FormEvent<HTMLTextAreaElement>) => {
-    const text = e.currentTarget.value;
-    setFieldError("text", false);
-    dispatch({
-      type: "SET_TEXT",
-      payload: { property: "value", value: text },
-    });
+  const handleFieldError = (field: keyof FormState, value: boolean) => {
+    dispatch({ type: "SET_FIELD_ERROR", payload: { field, value } });
   };
-
-  const handleListId = (listId: string) => {
-    setFieldError("listId", false);
-    dispatch({
-      type: "SET_LISTID",
-      payload: { property: "value", value: listId },
-    });
+  const handleFieldValue = (field: keyof FormState, value: string) => {
+    handleFieldError(field, false);
+    dispatch({ type: "SET_FIELD_VALUE", payload: { field, value } });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,14 +89,13 @@ export const useNoteForm = () => {
       error: "Wystąpił błąd w dodawaniu.",
     });
 
+    resetForm();
     refetchNotes();
   };
 
   return {
     state,
-    handleTitle,
-    handleText,
-    handleListId,
+    handleFieldValue,
     handleSubmit,
     selectOptions,
   };

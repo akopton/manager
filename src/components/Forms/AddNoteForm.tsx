@@ -3,35 +3,44 @@ import { Input } from "../BaseComponents/Input/Input";
 import { Select } from "../BaseComponents/Select/Select";
 import { Textarea } from "../BaseComponents/Textarea/Textarea";
 import { Button } from "../BaseComponents/Button/Button";
-import { useNoteForm } from "@/hooks/useNoteForm";
+import { FormState, useNoteForm } from "@/hooks/useNoteForm";
+import { useEffect, useState } from "react";
 
-type FormData = Record<string, string> & {
+type FormData = {
+  [key: string]: string;
   title: string;
   text: string;
   listId: string;
 };
 
 type FormProps = {
-  initialData?: FormData;
+  initialData?: FormData & { id: string };
 };
 
 export const AddNoteForm = (props: FormProps) => {
-  // const { initialData } = props;
+  const [initialFormState, setInitialFormState] = useState<FormState>();
+  const { initialData } = props;
 
-  const {
-    state,
-    handleTitle,
-    handleText,
-    handleListId,
-    handleSubmit,
-    selectOptions,
-  } = useNoteForm();
+  useEffect(() => {
+    if (initialData) {
+      const { title, text, listId } = initialData;
+      const initialFormData = {
+        title: { value: title, error: false },
+        text: { value: text, error: false },
+        listId: { value: listId, error: false },
+      };
+      setInitialFormState(initialFormData);
+    }
+  }, [initialData]);
+
+  const { state, handleFieldValue, handleSubmit, selectOptions } =
+    useNoteForm(initialFormState);
 
   return (
     <Form onSubmit={handleSubmit}>
       <Select
         options={selectOptions}
-        onChange={handleListId}
+        onChange={(value) => handleFieldValue("listId", value)}
         value={state.listId.value}
         placeholder="Select or search..."
         searchMode
@@ -39,12 +48,12 @@ export const AddNoteForm = (props: FormProps) => {
       />
       <Input
         type="text"
-        onChange={handleTitle}
+        onChange={(e) => handleFieldValue("title", e.currentTarget.value)}
         value={state.title.value}
         error={state.title.error}
       />
       <Textarea
-        onChange={handleText}
+        onChange={(e) => handleFieldValue("text", e.currentTarget.value)}
         value={state.text.value}
         error={state.text.error}
       />

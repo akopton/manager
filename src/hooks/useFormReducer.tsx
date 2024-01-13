@@ -1,9 +1,14 @@
 import { useReducer } from "react";
 import { FormState } from "./useNoteForm";
 
+type TPayload = {
+  field: keyof FormState;
+  value: string | boolean;
+};
+
 type TAction = {
   type: string;
-  payload: { property: string; value: string | boolean };
+  payload: TPayload;
 };
 
 export const useFormReducer = () => {
@@ -15,24 +20,16 @@ export const useFormReducer = () => {
 
   const formReducer = (state: FormState, action: TAction) => {
     const { type, payload } = action;
+    const { field, value } = payload;
     switch (type) {
-      case "SET_TITLE":
-        return {
-          ...state,
-          title: { ...state.title, [payload.property]: payload.value },
-        };
+      case "SET_FIELD_VALUE":
+        return { ...state, [field]: { ...state[field], value } };
 
-      case "SET_TEXT":
-        return {
-          ...state,
-          text: { ...state.text, [payload.property]: payload.value },
-        };
+      case "SET_FIELD_ERROR":
+        return { ...state, [field]: { ...state[field], error: value } };
 
-      case "SET_LISTID":
-        return {
-          ...state,
-          listId: { ...state.listId, [payload.property]: payload.value },
-        };
+      case "INIT_FORM":
+        return { ...state, [field]: { value, error: false } };
 
       default:
         return state;
