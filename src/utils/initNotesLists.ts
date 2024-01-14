@@ -1,9 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
-const addListToUser = async (name: string, userId: string) => {
-  await prisma.notesList.create({
+const addListToUser = async (
+  name: string,
+  userId: string,
+  db: PrismaClient,
+) => {
+  await db.notesList.create({
     data: {
       name,
       owner: { connect: { id: userId } },
@@ -12,6 +14,8 @@ const addListToUser = async (name: string, userId: string) => {
 };
 
 export const initNotesLists = async (userId: string) => {
+  const prisma = new PrismaClient();
+
   const defaultListName = "Twoje notatki";
   const sharedListName = "Udostępnione";
 
@@ -25,11 +29,11 @@ export const initNotesLists = async (userId: string) => {
   const hasSharedList = lists.find((el) => el.name === sharedListName);
 
   if (!hasDefaultList) {
-    await addListToUser(defaultListName, userId);
+    await addListToUser(defaultListName, userId, prisma);
   }
 
   if (!hasSharedList) {
-    await addListToUser(sharedListName, userId);
+    await addListToUser(sharedListName, userId, prisma);
   }
 
   return prisma.$disconnect();
