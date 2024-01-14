@@ -1,9 +1,11 @@
+import { CSSProperties } from "react";
 import styles from "./button.module.css";
 
 type DefaultProps = {
   isDisabled?: boolean;
-  text: string;
+  text?: string;
   icon?: React.ReactNode;
+  style?: CSSProperties;
 };
 
 type DefaultButton = {
@@ -19,7 +21,7 @@ type FormButton = {
 type ButtonProps = DefaultProps & (DefaultButton | FormButton);
 
 export const Button = (props: ButtonProps) => {
-  const { type, isDisabled, text, onClick, icon } = props;
+  const { type, isDisabled, text, onClick, icon, style } = props;
 
   return (
     <button
@@ -27,8 +29,9 @@ export const Button = (props: ButtonProps) => {
       disabled={isDisabled}
       className={styles.btn}
       onClick={onClick}
+      style={style}
     >
-      {text}
+      {text && text}
       {icon && icon}
     </button>
   );
