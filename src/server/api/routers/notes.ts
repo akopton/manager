@@ -1,5 +1,22 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { Prisma } from "@prisma/client";
+
+type NotesListWithNotes = Prisma.NotesListGetPayload<{
+  include: { notes: true };
+}>[];
+
+const putSharedListToEnd = (array: NotesListWithNotes) => {
+  const sharedListName = "Udostępnione";
+  const sharedList = array.find((list) => list.name === sharedListName);
+  const newLists = array.filter((list) => list.name !== sharedListName);
+
+  if (sharedList) {
+    newLists.push(sharedList);
+  }
+
+  return newLists;
+};
 
 export const notesRouter = createTRPCRouter({
   addNote: protectedProcedure
@@ -45,7 +62,9 @@ export const notesRouter = createTRPCRouter({
       include: { notes: true },
     });
 
-    return lists;
+    const newLists = putSharedListToEnd(lists);
+
+    return newLists;
   }),
 
   getNoteById: protectedProcedure.input(z.string()).query(({ ctx, input }) => {

@@ -1,13 +1,16 @@
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
 
 export const useNotesLists = () => {
+  const { data: lists } = api.notes.getLists.useQuery();
+  const { mutateAsync: addList } = api.notes.addList.useMutation();
+  const refetchLists = api.notes.getLists.useQuery().refetch;
+
   const {
     query: { listId },
   } = useRouter();
-
-  const { data: lists } = api.notes.getLists.useQuery();
 
   const [openedList, setOpenedList] = useState<string | undefined>(
     listId as string,
@@ -30,5 +33,22 @@ export const useNotesLists = () => {
     setOpenedList(id);
   };
 
-  return { lists: mappedLists, openList };
+  const addNewList = async (name: string) => {
+    await toast.promise(addList(name), {
+      success: {
+        render() {
+          return "Pomyślnie dodano listę!";
+        },
+      },
+      error: {
+        render() {
+          return "Lista o podanej nazwie już istnieje!";
+        },
+      },
+    });
+
+    await refetchLists();
+  };
+
+  return { lists: mappedLists, openList, addNewList };
 };

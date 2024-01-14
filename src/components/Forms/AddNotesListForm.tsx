@@ -1,20 +1,19 @@
-import { MdAddCircleOutline } from "react-icons/md";
 import { Button } from "../BaseComponents/Button/Button";
 import { Form } from "../BaseComponents/Form/Form";
 import { Input } from "../BaseComponents/Input/Input";
 import { useState } from "react";
 import { api } from "@/utils/api";
 import { toast } from "react-toastify";
+import { useNotesLists } from "@/hooks/useNotesLists";
 
 type FormProps = {
   closeForm: () => void;
 };
 
 export const AddNotesListForm = (props: FormProps) => {
+  const { addNewList } = useNotesLists();
   const { closeForm } = props;
   const [name, setName] = useState<string>("");
-  const { mutateAsync: addList } = api.notes.addList.useMutation();
-  const refetchLists = api.notes.getLists.useQuery().refetch;
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
@@ -29,15 +28,8 @@ export const AddNotesListForm = (props: FormProps) => {
       return;
     }
 
-    await toast.promise(addList(name), {
-      success: {
-        render() {
-          return "Pomyślnie dodano listę!";
-        },
-      },
-    });
+    await addNewList(name);
 
-    await refetchLists();
     closeForm();
   };
 

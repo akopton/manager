@@ -12,6 +12,8 @@ export type FormState = {
 export const useNoteForm = (initialData: FormState | undefined) => {
   const [state, dispatch] = useFormReducer();
   const { mutateAsync: addNote } = api.notes.addNote.useMutation();
+  const refetchNotes = api.notes.getLists.useQuery().refetch;
+  const { data: lists } = api.notes.getLists.useQuery();
 
   const initForm = (data: FormState) => {
     Object.keys(data).forEach((key) => {
@@ -30,10 +32,6 @@ export const useNoteForm = (initialData: FormState | undefined) => {
       initForm(initialData);
     }
   }, [initialData]);
-
-  const refetchNotes = api.notes.getLists.useQuery().refetch;
-
-  const { data: lists } = api.notes.getLists.useQuery();
 
   const selectOptions = useMemo(() => {
     return lists?.map((el) => ({ value: el.id, label: el.name }));
