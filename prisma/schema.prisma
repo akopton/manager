@@ -70,7 +70,7 @@ model Note {
 
 model NotesList {
     id      String @id @default(cuid())
-    name    String
+    name    String @unique
     notes   Note[]
     owner   User   @relation(fields: [ownerId], references: [id])
     ownerId String
