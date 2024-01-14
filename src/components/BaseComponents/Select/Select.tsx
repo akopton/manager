@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./select.module.css";
-import { MdArrowDropDown, MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowDown } from "react-icons/md";
 import { Popup } from "../Popup/Popup";
-import { toast, useToast } from "react-toastify";
+import { toast } from "react-toastify";
+import { Blur } from "../Blur/Blur";
 
 type TOption = {
   value: string;
@@ -61,6 +62,7 @@ export const Select = (props: SelectProps) => {
         toast.error("Proszę wybrać listę");
       }
     }
+    setShowOptions(false);
   };
 
   return (
@@ -86,25 +88,28 @@ export const Select = (props: SelectProps) => {
         </button>
       </div>
       {showOptions && (
-        <Popup>
-          <ul className={styles.list} onBlur={handleBlur}>
-            {filteredOptions && filteredOptions.length < 1 ? (
-              <li className={styles.listItemShim}>Brak wyników</li>
-            ) : (
-              filteredOptions?.map((el) => {
-                return (
-                  <li
-                    onClick={() => handleSelectOption(el)}
-                    className={styles.listItem}
-                    key={el.value}
-                  >
-                    {el.label}
-                  </li>
-                );
-              })
-            )}
-          </ul>
-        </Popup>
+        <>
+          <Popup>
+            <ul className={styles.list} onBlur={handleBlur}>
+              {filteredOptions && filteredOptions.length < 1 ? (
+                <li className={styles.listItemShim}>Brak wyników</li>
+              ) : (
+                filteredOptions?.map((el) => {
+                  return (
+                    <li
+                      onClick={() => handleSelectOption(el)}
+                      className={styles.listItem}
+                      key={el.value}
+                    >
+                      {el.label}
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          </Popup>
+          <Blur onClick={handleBlur} />
+        </>
       )}
     </div>
   );
