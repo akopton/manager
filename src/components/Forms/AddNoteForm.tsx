@@ -3,8 +3,8 @@ import { Input } from "../BaseComponents/Input/Input";
 import { Select } from "../BaseComponents/Select/Select";
 import { Textarea } from "../BaseComponents/Textarea/Textarea";
 import { Button } from "../BaseComponents/Button/Button";
-import { FormState, useNoteForm } from "@/hooks/useNoteForm";
 import { useEffect, useState } from "react";
+import { FormState, useNoteForm } from "@/hooks/useNoteForm";
 
 type FormData = {
   [key: string]: string;
