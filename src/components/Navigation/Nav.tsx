@@ -4,11 +4,9 @@ import { ListItem } from "../BaseComponents/ListItem/ListItem";
 import { Button } from "../BaseComponents/Button/Button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useThemeContext } from "@/hooks/useThemeContext";
+import { ToggleThemeBtn } from "../BaseComponents/ToggleThemeBtn/ToggleThemeBtn";
 
 export const Nav = () => {
-  const { status } = useSession();
-  const { toggleTheme } = useThemeContext();
-
   const navItems = [
     { href: "/", text: "Home" },
     { href: "/notes", text: "Notatki" },
@@ -16,7 +14,7 @@ export const Nav = () => {
 
   return (
     <div className="flex h-16 w-full flex-row items-center justify-between border-b-2 p-4 text-2xl">
-      <Button type="button" text="Toggle theme" onClick={toggleTheme} />
+      <ToggleThemeBtn />
       <List
         direction="row"
         gap="20px"
