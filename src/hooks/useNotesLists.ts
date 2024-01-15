@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 export const useNotesLists = () => {
-  const { data: lists } = api.notes.getLists.useQuery();
-  const { mutateAsync: addList } = api.notes.addList.useMutation();
-  const refetchLists = api.notes.getLists.useQuery().refetch;
+  const { data: lists } = api.notesList.getLists.useQuery();
+  const { mutateAsync: addList } = api.notesList.addList.useMutation();
+  const refetchLists = api.notesList.getLists.useQuery().refetch;
 
   const {
     query: { listId },

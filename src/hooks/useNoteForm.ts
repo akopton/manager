@@ -9,22 +9,26 @@ export type FormState = {
   listId: { value: string; error: boolean };
 };
 
-export const useNoteForm = (initialData: FormState | undefined) => {
+type InitialFormState = { id: string } & FormState;
+
+export const useNoteForm = (initialData: InitialFormState | undefined) => {
   const [state, dispatch] = useFormReducer();
-  const { mutateAsync: addNote } = api.notes.addNote.useMutation();
-  const refetchNotes = api.notes.getLists.useQuery().refetch;
-  const { data: lists } = api.notes.getLists.useQuery();
+  const { mutateAsync: saveNote } = api.notes.saveNote.useMutation();
+  const refetchNotes = api.notesList.getLists.useQuery().refetch;
+  const { data: lists } = api.notesList.getLists.useQuery();
 
   const initForm = (data: FormState) => {
-    Object.keys(data).forEach((key) => {
-      dispatch({
-        type: "INIT_FORM",
-        payload: {
-          field: key as keyof FormState,
-          value: data[key as keyof FormState].value,
-        },
+    Object.keys(data)
+      .filter((key) => key !== "id")
+      .forEach((key) => {
+        dispatch({
+          type: "INIT_FORM",
+          payload: {
+            field: key as keyof FormState,
+            value: data[key as keyof FormState].value,
+          },
+        });
       });
-    });
   };
 
   useEffect(() => {
@@ -72,24 +76,31 @@ export const useNoteForm = (initialData: FormState | undefined) => {
     if (!validateForm(state)) return;
 
     const data = {
+      id: initialData?.id,
       title: state.title.value,
       text: state.text.value,
       listId: state.listId.value,
     };
 
-    await toast.promise(addNote({ ...data }), {
+    await toast.promise(saveNote({ ...data }), {
       pending: "Zapisywanie...",
       success: {
         render({ data }) {
-          return `Pomyślnie dodano notatkę ${data?.title}`;
+          return `Pomyślnie zapisano notatkę ${data?.title}`;
         },
       },
-      error: "Wystąpił błąd w dodawaniu.",
+      error: "Wystąpił błąd podczas zapisywania.",
     });
 
-    resetForm();
+    if (!initialData) resetForm();
     refetchNotes();
   };
+
+  useEffect(() => {
+    if (state) {
+      console.log(state);
+    }
+  }, [state]);
 
   return {
     state,
