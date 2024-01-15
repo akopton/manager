@@ -5,6 +5,8 @@ import { Textarea } from "../BaseComponents/Textarea/Textarea";
 import { Button } from "../BaseComponents/Button/Button";
 import { useEffect, useState } from "react";
 import { FormState, useNoteForm } from "@/hooks/useNoteForm";
+import { useRouter } from "next/router";
+import { MdKeyboardBackspace } from "react-icons/md";
 
 type FormData = {
   [key: string]: string;
@@ -18,13 +20,17 @@ type FormProps = {
 };
 
 export const AddNoteForm = (props: FormProps) => {
-  const [initialFormState, setInitialFormState] = useState<FormState>();
+  const router = useRouter();
+  const [initialFormState, setInitialFormState] = useState<
+    { id: string } & FormState
+  >();
   const { initialData } = props;
 
   useEffect(() => {
     if (initialData) {
-      const { title, text, listId } = initialData;
+      const { title, text, listId, id } = initialData;
       const initialFormData = {
+        id,
         title: { value: title, error: false },
         text: { value: text, error: false },
         listId: { value: listId, error: false },
@@ -37,7 +43,32 @@ export const AddNoteForm = (props: FormProps) => {
     useNoteForm(initialFormState);
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form
+      onSubmit={handleSubmit}
+      style={{
+        height: "100%",
+        alignItems: "flex-start",
+      }}
+    >
+      <div className="align-center flex w-full justify-between">
+        <Button
+          type="button"
+          icon={<MdKeyboardBackspace />}
+          onClick={() => router.back()}
+          style={{
+            fontSize: "3rem",
+            border: "none",
+          }}
+        />
+        <Button
+          type="submit"
+          text="Zapisz"
+          onClick={handleSubmit}
+          style={{
+            fontSize: "1.5rem",
+          }}
+        />
+      </div>
       <Select
         options={selectOptions}
         onChange={(value) => handleFieldValue("listId", value)}
@@ -57,7 +88,6 @@ export const AddNoteForm = (props: FormProps) => {
         value={state.text.value}
         error={state.text.error}
       />
-      <Button type="submit" text="Zapisz" onClick={handleSubmit} />
     </Form>
   );
 };
