@@ -1,14 +1,20 @@
-import { AddNoteForm } from "@/components/Forms/AddNoteForm";
+import { Button } from "@/components/BaseComponents/Button/Button";
 import { NotesLayout } from "@/components/Layouts/NotesLayout";
 import { api } from "@/utils/api";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { MdKeyboardBackspace } from "react-icons/md";
+import { FaRegEdit } from "react-icons/fa";
+import Link from "next/link";
 
 export default function NotesPage() {
   const {
-    query: { id },
+    query: { id, listId },
   } = useRouter();
   const { data: note } = api.notes.getNoteById.useQuery(id as string);
+  const { data: list } = api.notesList.getListById.useQuery(listId as string);
+  const router = useRouter();
+
   return (
     <>
       <Head>
@@ -18,7 +24,35 @@ export default function NotesPage() {
       </Head>
       <NotesLayout>
         <main className="h-full w-full">
-          {note && <AddNoteForm initialData={note} />}
+          <div className="align-center flex w-full justify-between">
+            <Button
+              type="button"
+              icon={<MdKeyboardBackspace />}
+              onClick={() => router.back()}
+              style={{
+                fontSize: "3rem",
+                border: "none",
+              }}
+            />
+            <Link
+              href={{
+                pathname: `/notes/${note?.id}/edit`,
+                query: {
+                  id: note?.id,
+                  listId: listId,
+                },
+              }}
+              as={`/notes/${note?.id}/edit`}
+              style={{
+                fontSize: "2.5rem",
+              }}
+            >
+              <FaRegEdit />
+            </Link>
+          </div>
+          <div>{list?.name}</div>
+          <div>{note?.title}</div>
+          <div>{note?.text}</div>
         </main>
       </NotesLayout>
     </>
