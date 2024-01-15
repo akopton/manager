@@ -5,6 +5,7 @@ import { ListItem } from "../BaseComponents/ListItem/ListItem";
 import { useCallback, useEffect, useState } from "react";
 import { Note } from "@prisma/client";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 type ListProps = {
   id: string;
@@ -17,6 +18,10 @@ type ListProps = {
 export const NotesList = (props: ListProps) => {
   const { data, title, id, isOpened, openList } = props;
   const [showScrollbar, setShowScrollbar] = useState<boolean>(false);
+  const router = useRouter();
+  const {
+    query: { id: noteId },
+  } = router;
 
   const handleClick = useCallback(() => {
     if (openList) {
@@ -36,12 +41,23 @@ export const NotesList = (props: ListProps) => {
     };
   }, [isOpened]);
 
+  console.log(router.pathname, router.asPath);
+
   return (
     <>
-      <Button
-        type="button"
-        text={title}
-        icon={
+      <Link
+        href={{
+          pathname: router.pathname,
+          query: {
+            id: noteId,
+            listId: id,
+          },
+        }}
+        as={router.asPath}
+        onClick={handleClick}
+      >
+        <div className="flex items-center py-1 text-2xl">
+          {title}
           <div
             style={{
               transform: !isOpened ? "rotate(0deg)" : "rotate(180deg)",
@@ -50,13 +66,8 @@ export const NotesList = (props: ListProps) => {
           >
             <MdKeyboardArrowDown />
           </div>
-        }
-        onClick={handleClick}
-        style={{
-          fontSize: "1.7rem",
-          border: "none",
-        }}
-      />
+        </div>
+      </Link>
       <List
         direction="column"
         style={{
