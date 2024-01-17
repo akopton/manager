@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { FormState, useNoteForm } from "@/hooks/useNoteForm";
 import { useRouter } from "next/router";
 import { MdKeyboardBackspace } from "react-icons/md";
+import { api } from "@/utils/api";
 
 type FormData = {
   [key: string]: string;
@@ -25,6 +26,7 @@ export const AddNoteForm = (props: FormProps) => {
     { id: string } & FormState
   >();
   const { initialData } = props;
+  const { data: usersList } = api.user.getUsers.useQuery();
 
   useEffect(() => {
     if (initialData) {
@@ -39,8 +41,13 @@ export const AddNoteForm = (props: FormProps) => {
     }
   }, [initialData]);
 
-  const { state, handleFieldValue, handleSubmit, selectOptions } =
-    useNoteForm(initialFormState);
+  const {
+    state,
+    handleFieldValue,
+    handleSubmit,
+    selectOptions,
+    userSelectOptions,
+  } = useNoteForm(initialFormState);
 
   return (
     <Form
@@ -77,16 +84,31 @@ export const AddNoteForm = (props: FormProps) => {
         searchMode
         error={state.listId.error}
       />
+      <Select
+        options={userSelectOptions}
+        onChange={() => {}}
+        value={""}
+        placeholder="Select or search..."
+        searchMode
+        error={state.listId.error}
+        multiSelect
+      />
       <Input
         type="text"
         onChange={(e) => handleFieldValue("title", e.currentTarget.value)}
         value={state.title.value}
         error={state.title.error}
+        style={{
+          fontSize: "2rem",
+        }}
       />
       <Textarea
         onChange={(e) => handleFieldValue("text", e.currentTarget.value)}
         value={state.text.value}
         error={state.text.error}
+        style={{
+          fontSize: "1.5rem",
+        }}
       />
     </Form>
   );

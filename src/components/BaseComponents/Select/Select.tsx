@@ -4,6 +4,8 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { Popup } from "../Popup/Popup";
 import { toast } from "react-toastify";
 import { Blur } from "../Blur/Blur";
+import { useSelect } from "@/hooks/useSelect";
+import { useMultiSelect } from "@/hooks/useMultiSelect";
 
 type TOption = {
   value: string;
@@ -17,52 +19,44 @@ type SelectProps = {
   value: string;
   placeholder?: string;
   error?: boolean;
+  multiSelect?: boolean;
 };
 
 export const Select = (props: SelectProps) => {
-  const [showOptions, setShowOptions] = useState(false);
-  const [selectValue, setSelectValue] = useState<string>("");
-  const { options, searchMode, onChange, value, placeholder, error } = props;
+  const {
+    options,
+    searchMode,
+    onChange,
+    value,
+    placeholder,
+    error,
+    multiSelect,
+  } = props;
+
+  const {
+    select,
+    search,
+    value: searchValue,
+    getFilteredOptions,
+    getInitialValue,
+    open,
+    close,
+    isOpen,
+  } = useSelect();
+
+  const filteredOptions = getFilteredOptions(options);
 
   useEffect(() => {
-    if (!value) setSelectValue("");
-    const selectedOption = options?.find((el) => el.value === value);
-    if (selectedOption?.label) {
-      setSelectValue(selectedOption.label);
+    if (options && value) {
+      getInitialValue(value, options);
     }
-  }, [value]);
+  }, [options, value]);
 
-  const filteredOptions = useMemo(() => {
-    if (options?.find((el) => el.label === selectValue)) return options;
-    return options?.filter(({ label }) =>
-      label.toLowerCase().includes(selectValue?.toLowerCase()),
-    );
-  }, [selectValue]);
+  const { selectedOptions, select: selectMultiple } = useMultiSelect();
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setShowOptions(true);
-    setSelectValue(e.currentTarget.value);
-  };
-
-  const handleShowOptions = () => {
-    setShowOptions((prev) => !prev);
-  };
-
-  const handleSelectOption = (option: { value: string; label: string }) => {
-    const { value, label } = option;
-    onChange(value);
-    setSelectValue(label);
-    setShowOptions(false);
-  };
-
-  const handleBlur = () => {
-    if (selectValue && selectValue !== "") {
-      const found = options?.find(({ label }) => label === selectValue);
-      if (!found) {
-        toast.error("Proszę wybrać listę");
-      }
-    }
-    setShowOptions(false);
+  const getSelected = (option: TOption) => {
+    const found = selectedOptions.find((opt) => opt.value === option.value);
+    return found ? true : false;
   };
 
   return (
@@ -76,41 +70,95 @@ export const Select = (props: SelectProps) => {
           placeholder={placeholder}
           className={styles.input}
           readOnly={!searchMode}
-          value={selectValue}
-          onChange={handleChange}
+          value={searchValue}
+          onChange={(e) => search(e.currentTarget.value)}
         />
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={handleShowOptions}
-        >
+        <button type="button" className={styles.btn} onClick={open}>
           <MdKeyboardArrowDown />
         </button>
       </div>
-      {showOptions && (
+      {isOpen && (
         <>
           <Popup>
-            <ul className={styles.list} onBlur={handleBlur}>
+            <ul className={styles.list}>
               {filteredOptions && filteredOptions.length < 1 ? (
                 <li className={styles.listItemShim}>Brak wyników</li>
               ) : (
                 filteredOptions?.map((el) => {
-                  return (
-                    <li
-                      onClick={() => handleSelectOption(el)}
-                      className={styles.listItem}
-                      key={el.value}
-                    >
-                      {el.label}
-                    </li>
-                  );
+                  if (multiSelect) {
+                    return (
+                      <CheckboxListItem
+                        {...el}
+                        onSelect={selectMultiple}
+                        selected={getSelected(el)}
+                        key={el.value}
+                      />
+                    );
+                  } else {
+                    return (
+                      <DefaultListItem
+                        {...el}
+                        onSelect={(opt) => select(opt, onChange)}
+                        key={el.value}
+                      />
+                    );
+                  }
                 })
               )}
             </ul>
           </Popup>
-          <Blur onClick={handleBlur} />
+          <Blur onClick={close} />
         </>
       )}
     </div>
+  );
+};
+
+type DefaultListItemProps = {
+  value: string;
+  label: string;
+  onSelect: (opt: { value: string; label: string }) => void;
+};
+
+const DefaultListItem = (props: DefaultListItemProps) => {
+  const { value, label, onSelect } = props;
+
+  return (
+    <li
+      onClick={() => onSelect({ value, label })}
+      className={styles.listItem}
+      key={value}
+    >
+      {label}
+    </li>
+  );
+};
+
+type CheckboxListItemProps = {
+  value: string;
+  label: string;
+  onSelect: (option: TOption) => void;
+  selected?: boolean;
+};
+
+const CheckboxListItem = (props: CheckboxListItemProps) => {
+  const { value, label, onSelect, selected } = props;
+
+  const handleChecked = (e: React.FormEvent<HTMLInputElement>) => {
+    onSelect({ value, label });
+  };
+
+  return (
+    <li>
+      <label htmlFor={value}>
+        <input
+          name={value}
+          type="checkbox"
+          onChange={handleChecked}
+          checked={selected}
+        />
+        {label}
+      </label>
+    </li>
   );
 };

@@ -41,8 +41,6 @@ export const NotesList = (props: ListProps) => {
     };
   }, [isOpened]);
 
-  console.log(router.pathname, router.asPath);
-
   return (
     <>
       <Link

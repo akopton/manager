@@ -4,4 +4,5 @@
   outline: none;
   border-bottom: 2px solid var(--light-blue);
   font-size: 1.5rem;
+  border-radius: 12px;
 }

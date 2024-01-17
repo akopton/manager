@@ -16,6 +16,7 @@ export const useNoteForm = (initialData: InitialFormState | undefined) => {
   const { mutateAsync: saveNote } = api.notes.saveNote.useMutation();
   const refetchNotes = api.notesList.getLists.useQuery().refetch;
   const { data: lists } = api.notesList.getLists.useQuery();
+  const { data: usersList } = api.user.getUsers.useQuery();
 
   const initForm = (data: FormState) => {
     Object.keys(data)
@@ -96,16 +97,18 @@ export const useNoteForm = (initialData: InitialFormState | undefined) => {
     refetchNotes();
   };
 
-  useEffect(() => {
-    if (state) {
-      console.log(state);
-    }
-  }, [state]);
+  const userSelectOptions = useMemo(() => {
+    return usersList?.map((user) => ({
+      value: user.id,
+      label: user.name ?? user.email ?? "",
+    }));
+  }, [usersList]);
 
   return {
     state,
     handleFieldValue,
     handleSubmit,
     selectOptions,
+    userSelectOptions,
   };
 };
