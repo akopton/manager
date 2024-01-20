@@ -1,9 +1,14 @@
 import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 export const useNotesLists = () => {
+  const session = useSession();
+  const { data: sharedNotes } = api.notes.getSharedNotesForUser.useQuery(
+    session.data?.user.id as string,
+  );
   const { data: lists } = api.notesList.getLists.useQuery();
   const { mutateAsync: addList } = api.notesList.addList.useMutation();
   const refetchLists = api.notesList.getLists.useQuery().refetch;
@@ -16,8 +21,23 @@ export const useNotesLists = () => {
     listId as string,
   );
 
+  const populatedLists = useMemo(() => {
+    if (sharedNotes) {
+      return lists?.map((list) => {
+        if (list.name === "Udostępnione") {
+          return { ...list, notes: [...list.notes, ...sharedNotes] };
+        } else {
+          return list;
+        }
+      });
+    } else return lists;
+  }, [lists, sharedNotes]);
+
   const mappedLists = useMemo(() => {
-    const newLists = lists?.map((list) => ({ ...list, isOpened: false }));
+    const newLists = populatedLists?.map((list) => ({
+      ...list,
+      isOpened: false,
+    }));
     if (newLists && openedList) {
       return newLists.map((list) =>
         list.id === openedList
@@ -27,7 +47,7 @@ export const useNotesLists = () => {
     } else {
       return newLists;
     }
-  }, [lists, openedList]);
+  }, [populatedLists, openedList]);
 
   const openList = (id?: string) => {
     setOpenedList(id);
