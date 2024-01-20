@@ -49,9 +49,8 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    NotesList     NotesList[]
-    Note          Note?       @relation(fields: [noteId], references: [id])
-    noteId        String?
+    notesLists    NotesList[]
+    notesList     Note[]
 }
 
 model VerificationToken {
@@ -75,8 +74,10 @@ model Note {
 
 model NotesList {
     id      String @id @default(cuid())
-    name    String @unique
+    name    String
     notes   Note[]
     owner   User   @relation(fields: [ownerId], references: [id])
     ownerId String
+
+    @@unique([name, ownerId])
 }
