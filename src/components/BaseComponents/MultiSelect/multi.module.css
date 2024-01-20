@@ -1,0 +1,17 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.main {
+  border: 2px solid var(--light-blue);
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.valueContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

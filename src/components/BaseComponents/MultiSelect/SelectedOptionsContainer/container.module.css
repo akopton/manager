@@ -1,0 +1,33 @@
+.container {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.placeholder {
+  white-space: nowrap;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.listItem {
+  font-size: 0.5rem;
+  background-color: slategray;
+}
+
+.listItemBtn {
+  height: 100%;
+  width: 100%;
+}
+
+.btnLabel {
+}
+
+.btnIcon {
+  font-size: 1.5rem;
+}
