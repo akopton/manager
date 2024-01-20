@@ -1,8 +1,15 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  getUsers: publicProcedure.query(async ({ ctx }) => {
-    const users = await ctx.db.user.findMany();
+  getUsers: protectedProcedure.query(async ({ ctx }) => {
+    const loggedUser = ctx.session.user;
+    const users = (await ctx.db.user.findMany({
+      where: {
+        id: {
+          not: loggedUser.id
+        }
+      }
+    }))
     return users;
   }),
 });
