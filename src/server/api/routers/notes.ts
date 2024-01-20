@@ -9,10 +9,11 @@ export const notesRouter = createTRPCRouter({
         title: z.string(),
         text: z.string(),
         listId: z.string(),
+        sharedWith: z.string().array(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, listId, title, text } = input;
+      const { id, listId, title, text, sharedWith } = input;
 
       if (id) {
         const note = await ctx.db.note.update({
@@ -27,6 +28,9 @@ export const notesRouter = createTRPCRouter({
                 id: listId,
               },
             },
+            sharedWith: {
+              connect: sharedWith.map((userId) => ({ id: userId })),
+            },
           },
         });
 
@@ -38,6 +42,9 @@ export const notesRouter = createTRPCRouter({
           title,
           text,
           list: { connect: { id: listId } },
+          sharedWith: {
+            connect: sharedWith.map((userId) => ({ id: userId })),
+          },
         },
       });
 
@@ -51,8 +58,29 @@ export const notesRouter = createTRPCRouter({
         where: {
           id: input,
         },
+        include: {
+          sharedWith: true,
+        },
       });
 
       return note;
+    }),
+
+  getSharedNotesForUser: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      const sharedNotes = await ctx.db.note.findMany({
+        where: {
+          sharedWith: {
+            some: {
+              id: userId,
+            },
+          },
+        },
+      });
+
+      return sharedNotes;
     }),
 });
