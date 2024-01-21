@@ -6,9 +6,6 @@ import { toast } from "react-toastify";
 
 export const useNotesLists = () => {
   const session = useSession();
-  const { data: sharedNotes } = api.notes.getSharedNotesForUser.useQuery(
-    session.data?.user.id as string,
-  );
   const { data: lists } = api.notesList.getLists.useQuery();
   const { mutateAsync: addList } = api.notesList.addList.useMutation();
   const refetchLists = api.notesList.getLists.useQuery().refetch;
@@ -21,20 +18,8 @@ export const useNotesLists = () => {
     listId as string,
   );
 
-  const populatedLists = useMemo(() => {
-    if (sharedNotes) {
-      return lists?.map((list) => {
-        if (list.name === "Udostępnione") {
-          return { ...list, notes: [...list.notes, ...sharedNotes] };
-        } else {
-          return list;
-        }
-      });
-    } else return lists;
-  }, [lists, sharedNotes]);
-
   const mappedLists = useMemo(() => {
-    const newLists = populatedLists?.map((list) => ({
+    const newLists = lists?.map((list) => ({
       ...list,
       isOpened: false,
     }));
@@ -47,7 +32,7 @@ export const useNotesLists = () => {
     } else {
       return newLists;
     }
-  }, [populatedLists, openedList]);
+  }, [lists, openedList]);
 
   const openList = (id?: string) => {
     setOpenedList(id);

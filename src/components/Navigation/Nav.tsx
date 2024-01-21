@@ -12,9 +12,12 @@ export const Nav = () => {
     { href: "/notes", text: "Notatki" },
   ];
 
+  const session = useSession();
+
   return (
     <div className="flex h-16 w-full flex-row items-center justify-between border-b-2 p-4 text-2xl">
       <ToggleThemeBtn />
+      <div>{session.data?.user.email}</div>
       <List
         direction="row"
         gap="20px"

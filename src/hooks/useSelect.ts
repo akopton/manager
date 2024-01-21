@@ -2,11 +2,11 @@ import { useCallback, useState } from "react";
 
 type TOption = {
   value: string;
-  label: string;
+  label: string | null;
 };
 
 export const useSelect = () => {
-  const [value, setValue] = useState<string>();
+  const [value, setValue] = useState<string | null>();
   const [isOpen, setIsOpen] = useState(false);
 
   const open = () => setIsOpen(true);
@@ -16,8 +16,8 @@ export const useSelect = () => {
   const getFilteredOptions = useCallback(
     (options?: TOption[]) => {
       if (value) {
-        return options?.filter(({ label }) =>
-          label.toLowerCase().includes(value?.toLowerCase()),
+        return options?.filter(
+          ({ label }) => label?.toLowerCase().includes(value?.toLowerCase()),
         );
       }
 
@@ -27,7 +27,7 @@ export const useSelect = () => {
   );
 
   const getInitialValue = (initialValue: string, options: TOption[]) => {
-    const found = options?.find(({ value, label }) => value === initialValue);
+    const found = options?.find(({ value }) => value === initialValue);
     setValue(found?.label);
   };
 

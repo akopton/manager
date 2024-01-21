@@ -9,7 +9,7 @@ import { useMultiSelect } from "@/hooks/useMultiSelect";
 
 type TOption = {
   value: string;
-  label: string;
+  label: string | null;
 };
 
 type SelectProps = {
@@ -20,6 +20,7 @@ type SelectProps = {
   placeholder?: string;
   error?: boolean;
   multiSelect?: boolean;
+  isDisabled?: boolean;
 };
 
 export const Select = (props: SelectProps) => {
@@ -31,6 +32,7 @@ export const Select = (props: SelectProps) => {
     placeholder,
     error,
     multiSelect,
+    isDisabled,
   } = props;
 
   const {
@@ -70,10 +72,16 @@ export const Select = (props: SelectProps) => {
           placeholder={placeholder}
           className={styles.input}
           readOnly={!searchMode}
-          value={searchValue}
+          value={searchValue || ""}
           onChange={(e) => search(e.currentTarget.value)}
+          disabled={isDisabled}
         />
-        <button type="button" className={styles.btn} onClick={open}>
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={open}
+          disabled={isDisabled}
+        >
           <MdKeyboardArrowDown />
         </button>
       </div>
@@ -116,8 +124,8 @@ export const Select = (props: SelectProps) => {
 
 type DefaultListItemProps = {
   value: string;
-  label: string;
-  onSelect: (opt: { value: string; label: string }) => void;
+  label: string | null;
+  onSelect: (opt: { value: string; label: string | null }) => void;
 };
 
 const DefaultListItem = (props: DefaultListItemProps) => {
@@ -136,7 +144,7 @@ const DefaultListItem = (props: DefaultListItemProps) => {
 
 type CheckboxListItemProps = {
   value: string;
-  label: string;
+  label: string | null;
   onSelect: (option: TOption) => void;
   selected?: boolean;
 };

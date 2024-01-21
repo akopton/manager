@@ -1,14 +1,11 @@
+import { TOption } from "@/components/BaseComponents/MultiSelect/MultiSelect";
 import { useState } from "react";
 
-type TOption = {
-  value: string;
-  label: string;
-};
-
 export const useMultiSelect = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<TOption[]>([]);
 
-  const select = (option: TOption) => {
+  const select = (option: TOption) =>
     setSelectedOptions((prev) => {
       const found = prev.find((el) => el.value === option.value);
       if (found) {
@@ -17,7 +14,8 @@ export const useMultiSelect = () => {
 
       return [...prev, option];
     });
-  };
 
-  return { selectedOptions, select };
+  const toggleOpen = () => setIsOpen((prev) => !prev);
+
+  return { toggleOpen, isOpen, selectedOptions, select };
 };

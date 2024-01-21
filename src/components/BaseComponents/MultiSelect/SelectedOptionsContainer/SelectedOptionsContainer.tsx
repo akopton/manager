@@ -7,7 +7,7 @@ type ContainerProps = {
   onOptionClick: (option: TOption) => void;
 };
 
-export const SelectedOptionsContainer = <T,>(props: ContainerProps) => {
+export const SelectedOptionsContainer = (props: ContainerProps) => {
   const { options, placeholder, onOptionClick } = props;
 
   return (

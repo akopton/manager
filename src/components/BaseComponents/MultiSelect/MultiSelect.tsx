@@ -1,7 +1,7 @@
 import { api } from "@/utils/api";
 import styles from "./multi.module.css";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   SelectedOption,
   SelectedOptionsContainer,
@@ -18,17 +18,23 @@ export type TOption = {
 type SelectProps = {
   options: TOption[];
   onChange: (options: TOption[]) => void;
+  initialSelectedOptions?: string[];
   placeholder: string;
 };
 
 export const MultiSelect = (props: SelectProps) => {
-  const { options, placeholder, onChange } = props;
-  const { toggleOpen, isOpen, selectedOptions, select, unselect } =
-    useMultiSelect();
+  const { options, placeholder, onChange, initialSelectedOptions } = props;
+  const { toggleOpen, isOpen, selectedOptions, select } = useMultiSelect();
 
   useEffect(() => {
     onChange(selectedOptions);
   }, [selectedOptions]);
+
+  const initialValue = useMemo(() => {
+    return options.filter(
+      (el) => !initialSelectedOptions?.some((option) => el.value === option),
+    );
+  }, [initialSelectedOptions]);
 
   return (
     <div className={styles.container}>
@@ -39,9 +45,9 @@ export const MultiSelect = (props: SelectProps) => {
       >
         <div className={styles.valueContainer}>
           <SelectedOptionsContainer
-            options={selectedOptions}
+            options={initialValue || selectedOptions}
             placeholder={placeholder}
-            onOptionClick={unselect}
+            onOptionClick={select}
           />
           <Button
             type="button"
@@ -52,6 +58,7 @@ export const MultiSelect = (props: SelectProps) => {
         </div>
         <OptionsContainer
           options={options}
+          selectedOptions={initialValue || selectedOptions}
           isOpen={isOpen}
           onOptionClick={select}
         />

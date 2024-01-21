@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { connect } from "http2";
 
 export const notesRouter = createTRPCRouter({
   saveNote: protectedProcedure
@@ -14,22 +15,24 @@ export const notesRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { id, listId, title, text, sharedWith } = input;
+      // find all lists that are owned by users in sharedWith array
+      const sharedLists = await ctx.db.notesList.findMany({
+        where: {
+          name: "Udostępnione",
+          ownerId: { in: sharedWith },
+        },
+      });
+
+      const listsIds = [...sharedLists.map((list) => list.id), listId];
 
       if (id) {
         const note = await ctx.db.note.update({
-          where: {
-            id: id,
-          },
+          where: { id },
           data: {
             title,
             text,
-            list: {
-              connect: {
-                id: listId,
-              },
-            },
-            sharedWith: {
-              connect: sharedWith.map((userId) => ({ id: userId })),
+            lists: {
+              connect: listsIds.map((id) => ({ id: id })),
             },
           },
         });
@@ -41,9 +44,8 @@ export const notesRouter = createTRPCRouter({
         data: {
           title,
           text,
-          list: { connect: { id: listId } },
-          sharedWith: {
-            connect: sharedWith.map((userId) => ({ id: userId })),
+          lists: {
+            connect: listsIds.map((id) => ({ id: id })),
           },
         },
       });
@@ -59,28 +61,42 @@ export const notesRouter = createTRPCRouter({
           id: input,
         },
         include: {
-          sharedWith: true,
-        },
-      });
-
-      return note;
-    }),
-
-  getSharedNotesForUser: protectedProcedure
-    .input(z.string())
-    .query(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
-
-      const sharedNotes = await ctx.db.note.findMany({
-        where: {
-          sharedWith: {
-            some: {
-              id: userId,
+          lists: {
+            where: {
+              ownerId: ctx.session.user.id,
             },
           },
         },
       });
 
-      return sharedNotes;
+      const sharedWith = await ctx.db.user.findMany({
+        where: {
+          notesLists: {
+            some: {
+              notes: {
+                some: {
+                  id: note?.id,
+                },
+              },
+              owner: {
+                id: {
+                  not: ctx.session.user.id,
+                },
+              },
+            },
+          },
+        },
+        select: { id: true },
+      });
+
+      if (note) {
+        const { lists, ...noteWithoutLists } = note;
+        if (lists[0])
+          return {
+            ...noteWithoutLists,
+            listId: lists[0].id,
+            sharedWith: sharedWith.map((user) => user.id),
+          };
+      }
     }),
 });
