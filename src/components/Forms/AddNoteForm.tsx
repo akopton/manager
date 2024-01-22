@@ -3,12 +3,11 @@ import { Input } from "../BaseComponents/Input/Input";
 import { Select } from "../BaseComponents/Select/Select";
 import { Textarea } from "../BaseComponents/Textarea/Textarea";
 import { Button } from "../BaseComponents/Button/Button";
-import { useEffect, useState } from "react";
-import { FormState, useNoteForm } from "@/hooks/useNoteForm";
+import { useEffect } from "react";
+import { useNoteForm } from "@/hooks/useNoteForm";
 import { useRouter } from "next/router";
-import { MdKeyboardBackspace } from "react-icons/md";
-import { api } from "@/utils/api";
 import { MultiSelect } from "../BaseComponents/MultiSelect/MultiSelect";
+import { IoClose } from "react-icons/io5";
 
 type FormData = {
   title: string;
@@ -55,14 +54,15 @@ export const AddNoteForm = (props: FormProps) => {
       <div className="flex w-full items-center justify-end">
         <Button
           type="button"
-          text="X"
+          icon={<IoClose />}
           onClick={() => router.back()}
           style={{
-            fontSize: "1.5rem",
+            fontSize: "2rem",
+            border: "none",
           }}
         />
       </div>
-      <div className="grid h-full w-full grid-cols-3 gap-5">
+      <div className="grid h-full w-full grid-cols-3 gap-5 px-10">
         <div className="col-span-2 grid grid-rows-3">
           <Input
             type="text"

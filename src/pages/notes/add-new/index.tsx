@@ -13,7 +13,7 @@ export default function AddNotePage() {
       <NotesLayout>
         <main className="h-full w-full">
           <div
-            className="fixed left-1/2 top-1/2 h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl px-12 py-14 pb-5"
+            className="fixed left-1/2 top-1/2 h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl px-2 py-2"
             style={{
               background: "rgba(255, 255, 255, .2)",
               backdropFilter: "blur(4px)",
