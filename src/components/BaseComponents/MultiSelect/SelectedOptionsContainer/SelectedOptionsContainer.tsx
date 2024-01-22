@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { TOption } from "../MultiSelect";
 import styles from "./container.module.css";
 
@@ -30,11 +31,15 @@ export type OptionProps = TOption & {
 };
 
 export const SelectedOption = (props: OptionProps) => {
+  const session = useSession();
   const { value, label, onClick } = props;
+
   return (
     <li className={styles.listItem} onClick={() => onClick({ value, label })}>
       <button type="button" className={styles.listItemBtn}>
-        <span className={styles.btnLabel}>{label}</span>
+        <span className={styles.btnLabel}>
+          {value === session.data?.user.id ? "You" : label}
+        </span>
         <span className={styles.btnIcon}>X</span>
       </button>
     </li>

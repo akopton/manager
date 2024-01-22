@@ -50,6 +50,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     notesLists    NotesList[]
+    Note          Note[]
 }
 
 model VerificationToken {
@@ -61,12 +62,14 @@ model VerificationToken {
 }
 
 model Note {
-    id            String      @id @default(cuid())
+    id            String    @id @default(cuid())
     title         String
     text          String
-    lists         NotesList[]
-    createdAt     DateTime    @default(now())
-    updatedAt     DateTime    @default(now())
+    list          NotesList @relation(fields: [listId], references: [id])
+    listId        String
+    sharedWith    User[]
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
     lastUpdatedBy String
 }
 

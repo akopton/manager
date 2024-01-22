@@ -1,6 +1,7 @@
 import { AddNoteForm } from "@/components/Forms/AddNoteForm";
 import { NotesLayout } from "@/components/Layouts/NotesLayout";
 import { api } from "@/utils/api";
+import { Note, User } from "@prisma/client";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -19,7 +20,27 @@ export default function NotesPage() {
       </Head>
       <NotesLayout>
         <main className="h-full w-full">
-          {note && <AddNoteForm initialData={note} />}
+          <div>
+            {note && (
+              <AddNoteForm
+                initialData={{
+                  ...note,
+                  sharedWith: note.sharedWith.map((el) => el.id),
+                }}
+              />
+            )}
+          </div>
+          {note && (
+            <div className="flex flex-col">
+              <span>id: {note.id}</span>
+              <span>title: {note.title}</span>
+              <span>text: {note.text}</span>
+              <span>listId: {note.listId}</span>
+              <div>
+                sharedWith: {note?.sharedWith.map((el) => <span>{el.id}</span>)}
+              </div>
+            </div>
+          )}
         </main>
       </NotesLayout>
     </>

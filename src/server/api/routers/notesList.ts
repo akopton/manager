@@ -1,18 +1,18 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { Prisma } from "@prisma/client";
+import { Note, Prisma } from "@prisma/client";
 
 type NotesListWithNotes = Prisma.NotesListGetPayload<{
   include: { notes: true };
 }>[];
 
-const putSharedListToEnd = (array: NotesListWithNotes) => {
+const populateSharedNotesList = (array: NotesListWithNotes, notes: Note[]) => {
   const sharedListName = "Udostępnione";
   const sharedList = array.find((list) => list.name === sharedListName);
   const newLists = array.filter((list) => list.name !== sharedListName);
 
   if (sharedList) {
-    newLists.push(sharedList);
+    newLists.push({ ...sharedList, notes: notes });
   }
 
   return newLists;
@@ -38,6 +38,18 @@ export const notesListRouter = createTRPCRouter({
   getLists: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
 
+    //get shared notes
+
+    const notes = await ctx.db.note.findMany({
+      where: {
+        sharedWith: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    });
+
     const lists = await ctx.db.notesList.findMany({
       where: {
         ownerId: userId,
@@ -45,7 +57,7 @@ export const notesListRouter = createTRPCRouter({
       include: { notes: true },
     });
 
-    const newLists = putSharedListToEnd(lists);
+    const newLists = populateSharedNotesList(lists, notes);
 
     return newLists;
   }),

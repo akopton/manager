@@ -12,7 +12,15 @@ export default function AddNotePage() {
       </Head>
       <NotesLayout>
         <main className="h-full w-full">
-          <AddNoteForm />
+          <div
+            className="fixed left-1/2 top-1/2 h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl px-12 py-14 pb-5"
+            style={{
+              background: "rgba(255, 255, 255, .2)",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <AddNoteForm />
+          </div>
         </main>
       </NotesLayout>
     </>

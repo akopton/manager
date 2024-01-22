@@ -8,12 +8,13 @@ import { FormState, useNoteForm } from "@/hooks/useNoteForm";
 import { useRouter } from "next/router";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { api } from "@/utils/api";
+import { MultiSelect } from "../BaseComponents/MultiSelect/MultiSelect";
 
 type FormData = {
-  [key: string]: string;
   title: string;
   text: string;
   listId: string;
+  sharedWith: string[];
 };
 
 type FormProps = {
@@ -22,90 +23,99 @@ type FormProps = {
 
 export const AddNoteForm = (props: FormProps) => {
   const router = useRouter();
-  const [initialFormState, setInitialFormState] = useState<
-    { id: string } & FormState
-  >();
   const { initialData } = props;
-  const { data: usersList } = api.user.getUsers.useQuery();
-
-  useEffect(() => {
-    if (initialData) {
-      const { title, text, listId, id } = initialData;
-      const initialFormData = {
-        id,
-        title: { value: title, error: false },
-        text: { value: text, error: false },
-        listId: { value: listId, error: false },
-      };
-      setInitialFormState(initialFormData);
-    }
-  }, [initialData]);
 
   const {
     state,
+    handleInitialState,
     handleFieldValue,
     handleSubmit,
-    selectOptions,
+    listSelectOptions,
     userSelectOptions,
-  } = useNoteForm(initialFormState);
+  } = useNoteForm();
+
+  useEffect(() => {
+    if (initialData) {
+      handleInitialState({
+        ...initialData,
+        errors: { title: false, text: false, listId: false },
+      });
+    }
+  }, [initialData]);
 
   return (
     <Form
       onSubmit={handleSubmit}
       style={{
         height: "100%",
-        alignItems: "flex-start",
+        alignItems: "center",
+        width: "100%",
       }}
     >
-      <div className="align-center flex w-full justify-between">
+      <div className="flex w-full items-center justify-end">
         <Button
           type="button"
-          icon={<MdKeyboardBackspace />}
+          text="X"
           onClick={() => router.back()}
-          style={{
-            fontSize: "3rem",
-            border: "none",
-          }}
-        />
-        <Button
-          type="submit"
-          text="Zapisz"
-          onClick={handleSubmit}
           style={{
             fontSize: "1.5rem",
           }}
         />
       </div>
-      <Select
-        options={selectOptions}
-        onChange={(value) => handleFieldValue("listId", value)}
-        value={state.listId.value}
-        placeholder="Select or search..."
-        searchMode
-        error={state.listId.error}
-      />
-      <Select
-        options={userSelectOptions}
-        onChange={() => {}}
-        value={""}
-        placeholder="Select or search..."
-        searchMode
-        error={state.listId.error}
-        multiSelect
-      />
-      <Input
-        type="text"
-        onChange={(e) => handleFieldValue("title", e.currentTarget.value)}
-        value={state.title.value}
-        error={state.title.error}
-        style={{
-          fontSize: "2rem",
-        }}
-      />
-      <Textarea
-        onChange={(e) => handleFieldValue("text", e.currentTarget.value)}
-        value={state.text.value}
-        error={state.text.error}
+      <div className="grid h-full w-full grid-cols-3 gap-5">
+        <div className="col-span-2 grid grid-rows-3">
+          <Input
+            type="text"
+            onChange={(e) => handleFieldValue("title", e.currentTarget.value)}
+            value={state.title}
+            error={state.errors.title}
+            style={{
+              fontSize: "2rem",
+            }}
+          />
+          <Textarea
+            onChange={(e) => handleFieldValue("text", e.currentTarget.value)}
+            value={state.text}
+            error={state.errors.text}
+            style={{
+              fontSize: "1.5rem",
+              border: "2px solid var(--light-blue)",
+              gridRow: "2/4",
+            }}
+          />
+        </div>
+        <div className="grid grid-rows-3">
+          <Select
+            options={listSelectOptions}
+            onChange={(value) => handleFieldValue("listId", value)}
+            value={state.listId}
+            placeholder="Select or search..."
+            searchMode
+            error={state.errors.listId}
+            isDisabled={
+              listSelectOptions?.find((opt) => opt.label === "Udostępnione")
+                ?.value === initialData?.listId
+            }
+          />
+          {userSelectOptions && (
+            <MultiSelect
+              options={userSelectOptions}
+              initialSelectedOptions={initialData?.sharedWith}
+              placeholder="Udostępnij innym..."
+              onChange={(array) =>
+                handleFieldValue(
+                  "sharedWith",
+                  array.map((el) => el.value),
+                )
+              }
+            />
+          )}
+        </div>
+      </div>
+      <Button
+        type="submit"
+        text="Zapisz"
+        onClick={handleSubmit}
         style={{
           fontSize: "1.5rem",
         }}

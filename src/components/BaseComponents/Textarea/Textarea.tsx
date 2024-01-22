@@ -15,7 +15,10 @@ export const Textarea = (props: TextareaProps) => {
       value={value}
       onChange={onChange}
       className={styles.textarea}
-      style={{ ...style, border: error ? "2px solid var(--light-red)" : "" }}
+      style={{
+        ...style,
+        border: error ? "2px solid var(--light-red)" : style?.border,
+      }}
     />
   );
 };

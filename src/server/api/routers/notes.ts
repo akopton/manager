@@ -14,16 +14,8 @@ export const notesRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
       const { id, listId, title, text, sharedWith } = input;
-      // find all lists that are owned by users in sharedWith array
-      const sharedLists = await ctx.db.notesList.findMany({
-        where: {
-          name: "Udostępnione",
-          ownerId: { in: sharedWith },
-        },
-      });
-
-      const listsIds = [...sharedLists.map((list) => list.id), listId];
 
       if (id) {
         const note = await ctx.db.note.update({
@@ -31,9 +23,11 @@ export const notesRouter = createTRPCRouter({
           data: {
             title,
             text,
-            lists: {
-              connect: listsIds.map((id) => ({ id: id })),
+            sharedWith: {
+              set: [],
+              connect: sharedWith.map((userId) => ({ id: userId })),
             },
+            lastUpdatedBy: currentUserId,
           },
         });
 
@@ -44,13 +38,57 @@ export const notesRouter = createTRPCRouter({
         data: {
           title,
           text,
-          lists: {
-            connect: listsIds.map((id) => ({ id: id })),
-          },
+          list: { connect: { id: listId } },
+          sharedWith: { connect: sharedWith.map((userId) => ({ id: userId })) },
+          lastUpdatedBy: currentUserId,
         },
       });
 
       return note;
+      // const sharedLists = await ctx.db.notesList.findMany({
+      //   where: {
+      //     name: "Udostępnione",
+      //     ownerId: { in: sharedWith },
+      //   },
+      // });
+
+      // const sharedListsIds = sharedLists.map((list) => list.id);
+
+      // if (id) {
+      //   const existingNote = await ctx.db.note.findUnique({ where: { id } });
+
+      //   const note = await ctx.db.note.update({
+      //     where: { id },
+      //     data: {
+      //       title,
+      //       text,
+      //       lists: {
+      //         set: [],
+      //         connect: [...sharedListsIds, existingNote?.listId].map(
+      //           (listId) => ({ id: listId }),
+      //         ),
+      //       },
+      //     },
+      //   });
+
+      //   return note;
+      // }
+
+      // const note = await ctx.db.note.create({
+      //   data: {
+      //     title,
+      //     text,
+      //     lists: {
+      //       connect: [...sharedListsIds, listId].map((listId) => ({
+      //         id: listId,
+      //       })),
+      //     },
+      //     listId,
+      //     lastUpdatedBy: currentUserId,
+      //   },
+      // });
+
+      // return note;
     }),
 
   getNoteById: protectedProcedure
@@ -61,42 +99,10 @@ export const notesRouter = createTRPCRouter({
           id: input,
         },
         include: {
-          lists: {
-            where: {
-              ownerId: ctx.session.user.id,
-            },
-          },
+          sharedWith: true,
         },
       });
 
-      const sharedWith = await ctx.db.user.findMany({
-        where: {
-          notesLists: {
-            some: {
-              notes: {
-                some: {
-                  id: note?.id,
-                },
-              },
-              owner: {
-                id: {
-                  not: ctx.session.user.id,
-                },
-              },
-            },
-          },
-        },
-        select: { id: true },
-      });
-
-      if (note) {
-        const { lists, ...noteWithoutLists } = note;
-        if (lists[0])
-          return {
-            ...noteWithoutLists,
-            listId: lists[0].id,
-            sharedWith: sharedWith.map((user) => user.id),
-          };
-      }
+      return note;
     }),
 });

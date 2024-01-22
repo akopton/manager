@@ -1,74 +1,65 @@
 import { toast } from "react-toastify";
-import { useFormReducer } from "./useFormReducer";
+import { useNoteFormReducer } from "./useNoteFormReducer";
 import { api } from "@/utils/api";
 import { useEffect, useMemo } from "react";
+import { useRouter } from "next/router";
+import { mapObjToOption } from "@/utils/mapObjToOption";
 
+type FormErrors = { title: boolean; text: boolean; listId: boolean };
 export type FormState = {
-  title: { value: string; error: boolean };
-  text: { value: string; error: boolean };
-  listId: { value: string; error: boolean };
+  id?: string;
+  title: string;
+  text: string;
+  listId: string;
+  sharedWith: string[];
+  errors: FormErrors;
 };
 
-type InitialFormState = { id: string } & FormState;
-
-export const useNoteForm = (initialData: InitialFormState | undefined) => {
-  const [state, dispatch] = useFormReducer();
+export const useNoteForm = () => {
+  const { data: users } = api.user.getUsers.useQuery();
+  const { data: lists } = api.notesList.getLists.useQuery();
   const { mutateAsync: saveNote } = api.notes.saveNote.useMutation();
   const refetchNotes = api.notesList.getLists.useQuery().refetch;
-  const { data: lists } = api.notesList.getLists.useQuery();
-  const { data: usersList } = api.user.getUsers.useQuery();
+  const userSelectOptions = users?.map(mapObjToOption);
+  const listSelectOptions = lists?.map(mapObjToOption);
 
-  const initForm = (data: FormState) => {
-    Object.keys(data)
-      .filter((key) => key !== "id")
-      .forEach((key) => {
-        dispatch({
-          type: "INIT_FORM",
-          payload: {
-            field: key as keyof FormState,
-            value: data[key as keyof FormState].value,
-          },
-        });
-      });
+  const [state, dispatch] = useNoteFormReducer();
+
+  const handleInitialState = (state: FormState) => {
+    const { errors, ...rest } = state;
+    const fields = Object.keys(rest);
+    fields.forEach((field) => {
+      type TField = "title" | "text" | "listId" | "sharedWith";
+      const value = rest[field as TField];
+      if (field === "sharedWith") console.log(value);
+      handleFieldValue(field as TField, value);
+    });
+    if (rest.id) handleFieldValue("id", rest.id);
   };
 
-  useEffect(() => {
-    if (initialData) {
-      initForm(initialData);
-    }
-  }, [initialData]);
+  const handleFieldError = (field: keyof FormState, value: boolean) =>
+    dispatch({ type: "SET_ERROR", payload: { field, value } });
 
-  const selectOptions = useMemo(() => {
-    return lists?.map((el) => ({ value: el.id, label: el.name }));
-  }, [lists]);
+  const handleFieldValue = (
+    field: keyof FormState,
+    value: string | boolean | string[],
+  ) => dispatch({ type: "SET_VALUE", payload: { field, value } });
 
   const validateForm = (data: FormState) => {
     let validatedFields = [];
-    const formFields = Object.keys(data);
+    const { id, sharedWith, errors, ...rest } = data;
+    const formFields = Object.keys(rest);
 
     formFields.forEach((field) => {
-      if (!data[field as keyof FormState].value) {
+      const value = data[field as keyof FormState];
+      if (!value) {
         validatedFields.push(field);
         handleFieldError(field as keyof FormState, true);
-        toast.error(`Pole ${field} jest wymagane!`);
+        toast.error(`Pole ${field} jest wymagane.`);
       }
     });
 
     return validatedFields.length < 1;
-  };
-
-  const resetForm = () => {
-    handleFieldValue("title", "");
-    handleFieldValue("text", "");
-    handleFieldValue("listId", "");
-  };
-
-  const handleFieldError = (field: keyof FormState, value: boolean) => {
-    dispatch({ type: "SET_FIELD_ERROR", payload: { field, value } });
-  };
-  const handleFieldValue = (field: keyof FormState, value: string) => {
-    handleFieldError(field, false);
-    dispatch({ type: "SET_FIELD_VALUE", payload: { field, value } });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,14 +67,7 @@ export const useNoteForm = (initialData: InitialFormState | undefined) => {
 
     if (!validateForm(state)) return;
 
-    const data = {
-      id: initialData?.id,
-      title: state.title.value,
-      text: state.text.value,
-      listId: state.listId.value,
-    };
-
-    await toast.promise(saveNote({ ...data }), {
+    await toast.promise(saveNote({ ...state }), {
       pending: "Zapisywanie...",
       success: {
         render({ data }) {
@@ -93,22 +77,16 @@ export const useNoteForm = (initialData: InitialFormState | undefined) => {
       error: "Wystąpił błąd podczas zapisywania.",
     });
 
-    if (!initialData) resetForm();
     refetchNotes();
   };
 
-  const userSelectOptions = useMemo(() => {
-    return usersList?.map((user) => ({
-      value: user.id,
-      label: user.name ?? user.email ?? "",
-    }));
-  }, [usersList]);
-
   return {
-    state,
+    handleInitialState,
+    handleFieldError,
     handleFieldValue,
     handleSubmit,
-    selectOptions,
     userSelectOptions,
+    listSelectOptions,
+    state,
   };
 };

@@ -24,16 +24,17 @@ type SelectProps = {
 
 export const MultiSelect = (props: SelectProps) => {
   const { options, placeholder, onChange, initialSelectedOptions } = props;
-  const { toggleOpen, isOpen, selectedOptions, select } = useMultiSelect();
+  const { toggleOpen, isOpen, selectedOptions, select, handleInitialSelected } =
+    useMultiSelect();
 
   useEffect(() => {
     onChange(selectedOptions);
   }, [selectedOptions]);
 
-  const initialValue = useMemo(() => {
-    return options.filter(
-      (el) => !initialSelectedOptions?.some((option) => el.value === option),
-    );
+  useEffect(() => {
+    if (initialSelectedOptions) {
+      handleInitialSelected(initialSelectedOptions, options);
+    }
   }, [initialSelectedOptions]);
 
   return (
@@ -45,7 +46,7 @@ export const MultiSelect = (props: SelectProps) => {
       >
         <div className={styles.valueContainer}>
           <SelectedOptionsContainer
-            options={initialValue || selectedOptions}
+            options={selectedOptions}
             placeholder={placeholder}
             onOptionClick={select}
           />
@@ -58,7 +59,7 @@ export const MultiSelect = (props: SelectProps) => {
         </div>
         <OptionsContainer
           options={options}
-          selectedOptions={initialValue || selectedOptions}
+          selectedOptions={selectedOptions}
           isOpen={isOpen}
           onOptionClick={select}
         />
@@ -83,7 +84,7 @@ const SelectPlaceholder = (props: PlaceholderProps) => {
           ) : (
             <ul className={styles.selectedOptions}>
               {options?.map((opt) => (
-                <SelectedOption {...opt} onClick={() => {}} />
+                <SelectedOption {...opt} onClick={() => {}} key={opt.value} />
               ))}
             </ul>
           )}
