@@ -3,7 +3,7 @@ import { FormState } from "./useNoteForm";
 
 type ActionPayload = {
   field: keyof FormState;
-  value: string | boolean | string[];
+  value: string | boolean | string[] | undefined;
 };
 
 type ActionType = "SET_VALUE" | "SET_ERROR" | "RESET_VALUES";

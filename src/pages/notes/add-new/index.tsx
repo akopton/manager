@@ -13,14 +13,18 @@ export default function AddNotePage() {
       <NotesLayout>
         <main className="h-full w-full">
           <div
-            className="fixed left-1/2 top-1/2 h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl px-2 py-2"
-            style={{
-              background: "rgba(255, 255, 255, .2)",
-              backdropFilter: "blur(4px)",
-            }}
+            className="fixed left-1/2 top-1/2 z-20 h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl border-2 p-4"
+            style={{ background: "var(--primary-bg)" }}
           >
             <AddNoteForm />
           </div>
+          <div
+            className="fixed left-0 top-0 z-10 h-full w-full"
+            style={{
+              background: "rgba(70, 80, 55, 0.2)",
+              backdropFilter: "blur(4px)",
+            }}
+          />
         </main>
       </NotesLayout>
     </>

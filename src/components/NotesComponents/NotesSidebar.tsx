@@ -16,17 +16,19 @@ export const NotesSidebar = () => {
 
   return (
     <aside className="flex h-full flex-col items-start ">
-      <div className="flex w-full items-center justify-between">
-        <Button type="button" text="Dodaj listę" onClick={openForm} />
-        <Button
-          type="button"
-          text="Dodaj notatkę"
-          onClick={() => router.push("/notes/add-new")}
-        />
+      <div className="flex w-full flex-col gap-4">
+        <div className="flex w-full items-center justify-between">
+          <Button type="button" text="Dodaj listę" onClick={openForm} />
+          <Button
+            type="button"
+            text="Dodaj notatkę"
+            onClick={() => router.push("/notes/add-new")}
+          />
+        </div>
+        {isFormOpened && (
+          <AddNotesListForm closeForm={() => setIsFormOpened(false)} />
+        )}
       </div>
-      {isFormOpened && (
-        <AddNotesListForm closeForm={() => setIsFormOpened(false)} />
-      )}
       {lists &&
         lists.map((list) => (
           <NotesList

@@ -42,7 +42,7 @@ export const useNoteForm = () => {
 
   const handleFieldValue = (
     field: keyof FormState,
-    value: string | boolean | string[],
+    value: string | boolean | string[] | undefined,
   ) => dispatch({ type: "SET_VALUE", payload: { field, value } });
 
   const validateForm = (data: FormState) => {

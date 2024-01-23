@@ -85,7 +85,14 @@ export const AddNoteForm = (props: FormProps) => {
           />
         </div>
         <div className="grid grid-rows-3">
-          <Select
+          {listSelectOptions && (
+            <Select
+              options={listSelectOptions}
+              value={state.listId}
+              onChange={(opt) => handleFieldValue("listId", opt?.value)}
+            />
+          )}
+          {/* <Select
             options={listSelectOptions}
             onChange={(value) => handleFieldValue("listId", value)}
             value={state.listId}
@@ -96,7 +103,7 @@ export const AddNoteForm = (props: FormProps) => {
               listSelectOptions?.find((opt) => opt.label === "Udostępnione")
                 ?.value === initialData?.listId
             }
-          />
+          /> */}
           {userSelectOptions && (
             <MultiSelect
               options={userSelectOptions}

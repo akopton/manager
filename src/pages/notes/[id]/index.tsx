@@ -12,7 +12,6 @@ export default function NotesPage() {
     query: { id, listId },
   } = useRouter();
   const { data: note } = api.notes.getNoteById.useQuery(id as string);
-  const { data: list } = api.notesList.getListById.useQuery(listId as string);
   const router = useRouter();
 
   return (
@@ -50,7 +49,7 @@ export default function NotesPage() {
               <FaRegEdit />
             </Link>
           </div>
-          <div>{list?.name}</div>
+          <div>{note?.listId}</div>
           <div>{note?.title}</div>
           <div>{note?.text}</div>
         </main>

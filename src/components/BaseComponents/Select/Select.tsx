@@ -1,172 +1,135 @@
-import { useEffect, useMemo, useState } from "react";
-import styles from "./select.module.css";
-import { MdKeyboardArrowDown } from "react-icons/md";
-import { Popup } from "../Popup/Popup";
-import { toast } from "react-toastify";
-import { Blur } from "../Blur/Blur";
+import { useEffect, useState } from "react";
+import { TOption } from "../MultiSelect/MultiSelect";
 import { useSelect } from "@/hooks/useSelect";
-import { useMultiSelect } from "@/hooks/useMultiSelect";
-
-type TOption = {
-  value: string;
-  label: string | null;
-};
+import styles from "./select.module.css";
+import { Button } from "../Button/Button";
+import { MdKeyboardArrowDown } from "react-icons/md";
 
 type SelectProps = {
-  options?: TOption[];
-  searchMode?: boolean;
-  onChange: (value: string) => void;
-  value: string;
-  placeholder?: string;
-  error?: boolean;
-  multiSelect?: boolean;
-  isDisabled?: boolean;
+  options: TOption[];
+  value?: string;
+  onChange: (opt: TOption | undefined) => void;
 };
 
 export const Select = (props: SelectProps) => {
-  const {
-    options,
-    searchMode,
-    onChange,
-    value,
-    placeholder,
-    error,
-    multiSelect,
-    isDisabled,
-  } = props;
-
-  const {
-    select,
-    search,
-    value: searchValue,
-    getFilteredOptions,
-    getInitialValue,
-    open,
-    close,
-    isOpen,
-  } = useSelect();
-
-  const filteredOptions = getFilteredOptions(options);
+  const { selected, select, isOpen, toggleOpen } = useSelect();
+  const { options, value, onChange } = props;
 
   useEffect(() => {
-    if (options && value) {
-      getInitialValue(value, options);
-    }
-  }, [options, value]);
+    const option = options.find((opt) => opt.value === value);
+    if (option) select(option);
+  }, []);
 
-  const { selectedOptions, select: selectMultiple } = useMultiSelect();
-
-  const getSelected = (option: TOption) => {
-    const found = selectedOptions.find((opt) => opt.value === option.value);
-    return found ? true : false;
-  };
+  useEffect(() => {
+    onChange(selected);
+  }, [selected]);
 
   return (
     <div className={styles.select}>
-      <div
-        className={styles.inputWrapper}
-        style={error ? { border: "2px solid var(--light-red)" } : {}}
-      >
-        <input
-          type="text"
-          placeholder={placeholder}
-          className={styles.input}
-          readOnly={!searchMode}
-          value={searchValue || ""}
-          onChange={(e) => search(e.currentTarget.value)}
-          disabled={isDisabled}
-        />
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={open}
-          disabled={isDisabled}
-        >
-          <MdKeyboardArrowDown />
-        </button>
+      <div className={styles.main}>
+        <div className={styles.selectValueContainer}>
+          <SelectedValue value={selected?.label || ""} />
+          <Button
+            onClick={toggleOpen}
+            type="button"
+            icon={<MdKeyboardArrowDown />}
+            style={{ fontSize: "1.5rem", border: "none", padding: "0" }}
+          />
+        </div>
+        {isOpen && (
+          <OptionsList
+            options={options}
+            onSelect={select}
+            selectedOption={selected}
+          />
+        )}
       </div>
-      {isOpen && (
-        <>
-          <Popup>
-            <ul className={styles.list}>
-              {filteredOptions && filteredOptions.length < 1 ? (
-                <li className={styles.listItemShim}>Brak wyników</li>
-              ) : (
-                filteredOptions?.map((el) => {
-                  if (multiSelect) {
-                    return (
-                      <CheckboxListItem
-                        {...el}
-                        onSelect={selectMultiple}
-                        selected={getSelected(el)}
-                        key={el.value}
-                      />
-                    );
-                  } else {
-                    return (
-                      <DefaultListItem
-                        {...el}
-                        onSelect={(opt) => select(opt, onChange)}
-                        key={el.value}
-                      />
-                    );
-                  }
-                })
-              )}
-            </ul>
-          </Popup>
-          <Blur onClick={close} />
-        </>
-      )}
     </div>
   );
 };
 
-type DefaultListItemProps = {
+// ----- //
+type ValueContainerProps = {
   value: string;
-  label: string | null;
-  onSelect: (opt: { value: string; label: string | null }) => void;
+};
+const SelectedValue = (props: ValueContainerProps) => {
+  const { value } = props;
+  return (
+    <input
+      type="text"
+      value={value}
+      className={styles.selectValue}
+      placeholder="Select an option..."
+    />
+  );
+};
+// ----- //
+
+// ----- //
+type ListProps = {
+  options: TOption[];
+  selectedOption?: TOption;
+  onSelect: (opt: TOption) => void;
 };
 
-const DefaultListItem = (props: DefaultListItemProps) => {
-  const { value, label, onSelect } = props;
+const OptionsList = (props: ListProps) => {
+  const { options, selectedOption, onSelect } = props;
+  return (
+    <ul className={styles.selectList}>
+      {options.map((opt) =>
+        opt.value === selectedOption?.value ? (
+          <SelectedOption label={opt.label} onClick={() => onSelect(opt)} />
+        ) : (
+          <DefaultOption label={opt.label} onClick={() => onSelect(opt)} />
+        ),
+      )}
+    </ul>
+  );
+};
+// ----- //
 
+const DefaultOption = (props: {
+  label: string | null;
+  onClick: () => void;
+}) => {
+  const { label, onClick } = props;
+  return (
+    <li onClick={onClick} className={styles.listItem}>
+      {label}
+    </li>
+  );
+};
+
+const SelectedOption = (props: {
+  label: string | null;
+  onClick: () => void;
+}) => {
+  const { label, onClick } = props;
   return (
     <li
-      onClick={() => onSelect({ value, label })}
+      onClick={onClick}
       className={styles.listItem}
-      key={value}
+      style={{ fontWeight: "bold" }}
     >
       {label}
     </li>
   );
 };
 
-type CheckboxListItemProps = {
-  value: string;
-  label: string | null;
-  onSelect: (option: TOption) => void;
-  selected?: boolean;
-};
-
-const CheckboxListItem = (props: CheckboxListItemProps) => {
-  const { value, label, onSelect, selected } = props;
-
-  const handleChecked = (e: React.FormEvent<HTMLInputElement>) => {
-    onSelect({ value, label });
-  };
-
+// ----- //
+const SelectValuePlaceholder = () => {
   return (
-    <li>
-      <label htmlFor={value}>
-        <input
-          name={value}
-          type="checkbox"
-          onChange={handleChecked}
-          checked={selected}
+    <div className={styles.main} style={{ opacity: "0" }}>
+      <div className={styles.selectValueContainer}>
+        <SelectedValue value="" />
+        <Button
+          isDisabled
+          onClick={() => {}}
+          type="button"
+          icon={<MdKeyboardArrowDown />}
+          style={{ border: "none" }}
         />
-        {label}
-      </label>
-    </li>
+      </div>
+    </div>
   );
 };
