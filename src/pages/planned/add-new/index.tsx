@@ -1,3 +1,4 @@
+import { AddEventForm } from "@/components/Forms/AddEventForm";
 import Head from "next/head";
 
 export default function AddEventPage() {
@@ -6,7 +7,9 @@ export default function AddEventPage() {
       <Head>
         <title>Dodaj wydarzenie</title>
       </Head>
-      <main>Dodaj wydarzenie</main>
+      <main>
+        <AddEventForm />
+      </main>
     </>
   );
 }
