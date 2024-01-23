@@ -25,7 +25,10 @@ export const Input = (props: InputProps) => {
         className={styles.input}
         value={value}
         onChange={onChange}
-        style={{ ...style, border: error ? "2px solid var(--light-red)" : "" }}
+        style={{
+          ...style,
+          border: error ? "2px solid var(--light-red)" : style?.border,
+        }}
       />
     </label>
   );
