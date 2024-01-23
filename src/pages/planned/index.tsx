@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 
 export default function PlannedPage() {
   return (
@@ -6,7 +7,12 @@ export default function PlannedPage() {
       <Head>
         <title>Zaplanowane</title>
       </Head>
-      <main>Zaplanowane</main>
+      <main>
+        <div>
+          Zaplanowane wydarzenia
+          <Link href="/planned/add-new">Zaplanuj</Link>
+        </div>
+      </main>
     </>
   );
 }
