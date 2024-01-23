@@ -40,6 +40,7 @@ export const useNotesLists = () => {
 
   const addNewList = async (name: string) => {
     await toast.promise(addList(name), {
+      pending: "Zapisywanie...",
       success: {
         render() {
           return "Pomyślnie dodano listę!";

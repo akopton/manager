@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 
-type StateErrors = {
+export type StateErrors = {
   name: boolean;
   date: boolean;
   isCyclic: boolean;
@@ -8,7 +8,7 @@ type StateErrors = {
   endAt: boolean;
 };
 
-type TState = {
+export type TState = {
   id?: string;
   name: string;
   date: Date;
@@ -20,7 +20,7 @@ type TState = {
 
 type ActionType = "SET_VALUE" | "SET_ERROR" | "INIT";
 type ActionPayload = {
-  field: string;
+  field: keyof TState;
   value: string | Date | boolean | number;
 };
 
