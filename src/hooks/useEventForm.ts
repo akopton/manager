@@ -46,5 +46,5 @@ export const useEventForm = () => {
     });
   };
 
-  return {};
+  return { state, handleValue, handleSubmit };
 };
