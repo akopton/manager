@@ -38,7 +38,9 @@ export const AddNotesListForm = (props: FormProps) => {
       onSubmit={handleSubmit}
       style={{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
         gap: "10px",
         width: "100%",
       }}
@@ -47,7 +49,7 @@ export const AddNotesListForm = (props: FormProps) => {
         type="text"
         value={name}
         onChange={handleChange}
-        style={{ fontSize: "1.2rem" }}
+        style={{ fontSize: "1rem" }}
       />
       <Button type="submit" text="Dodaj" onClick={handleSubmit} />
     </Form>

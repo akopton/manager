@@ -92,18 +92,6 @@ export const AddNoteForm = (props: FormProps) => {
               onChange={(opt) => handleFieldValue("listId", opt?.value)}
             />
           )}
-          {/* <Select
-            options={listSelectOptions}
-            onChange={(value) => handleFieldValue("listId", value)}
-            value={state.listId}
-            placeholder="Select or search..."
-            searchMode
-            error={state.errors.listId}
-            isDisabled={
-              listSelectOptions?.find((opt) => opt.label === "Udostępnione")
-                ?.value === initialData?.listId
-            }
-          /> */}
           {userSelectOptions && (
             <MultiSelect
               options={userSelectOptions}
