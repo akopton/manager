@@ -31,7 +31,7 @@ type TAction = {
 
 export const useEventFormReducer = () => {
   const initialState: TState = {
-    name: "string",
+    name: "",
     date: new Date(),
     errors: {
       name: false,
