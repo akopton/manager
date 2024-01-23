@@ -46,8 +46,16 @@ export const useEventFormReducer = () => {
     const { type, payload } = action;
     switch (type) {
       case "SET_VALUE":
-        return { ...state, [payload.field]: payload.value };
+        return {
+          ...state,
+          [payload.field]: payload.value,
+          errors: { ...state.errors, [payload.field]: false },
+        };
       case "SET_ERROR":
+        return {
+          ...state,
+          errors: { ...state.errors, [payload.field]: payload.value },
+        };
       case "INIT":
       default:
         return state;
