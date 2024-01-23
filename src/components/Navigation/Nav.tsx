@@ -10,6 +10,7 @@ export const Nav = () => {
   const navItems = [
     { href: "/", text: "Home" },
     { href: "/notes", text: "Notatki" },
+    { href: "/planned", text: "Zaplanowane" },
   ];
 
   const session = useSession();

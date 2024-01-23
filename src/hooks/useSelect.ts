@@ -9,8 +9,10 @@ export const useSelect = () => {
   const onClose = () => setIsOpen(false);
   const toggleOpen = () => setIsOpen((prev) => !prev);
 
-  const select = (opt: TOption) =>
+  const select = (opt: TOption) => {
     setSelected((prev) => (opt.value === prev?.value ? undefined : opt));
+    onClose();
+  };
 
   return { selected, select, toggleOpen, isOpen };
 };
