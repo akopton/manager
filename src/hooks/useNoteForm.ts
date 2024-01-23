@@ -1,7 +1,6 @@
 import { toast } from "react-toastify";
 import { useNoteFormReducer } from "./useNoteFormReducer";
 import { api } from "@/utils/api";
-import { useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { mapObjToOption } from "@/utils/mapObjToOption";
 
@@ -16,6 +15,7 @@ export type FormState = {
 };
 
 export const useNoteForm = () => {
+  const { back } = useRouter();
   const { data: users } = api.user.getUsers.useQuery();
   const { data: lists } = api.notesList.getLists.useQuery();
   const { mutateAsync: saveNote } = api.notes.saveNote.useMutation();
@@ -78,6 +78,7 @@ export const useNoteForm = () => {
     });
 
     refetchNotes();
+    back();
   };
 
   return {

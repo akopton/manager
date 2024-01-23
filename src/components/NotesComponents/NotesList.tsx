@@ -72,6 +72,7 @@ export const NotesList = (props: ListProps) => {
           overflow: showScrollbar ? "auto" : "hidden",
           height: "100%",
           maxHeight: isOpened ? "100%" : "0",
+          gap: "10px",
           transition: "max-height .3s ease",
           width: "100%",
         }}
@@ -88,9 +89,13 @@ export const NotesList = (props: ListProps) => {
               }}
               as={`/notes/${note.id}`}
             >
-              <div className="flex flex-col border-2 px-2 py-1">
-                <span className="text-2xl">{note.title}</span>
-                <span className="text-lg">{note.text}</span>
+              <div className="flex flex-col rounded-xl border-2 px-2 py-1">
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap text-2xl">
+                  {note.title}
+                </span>
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap text-lg">
+                  {note.text}
+                </span>
               </div>
             </Link>
           </ListItem>
