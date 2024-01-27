@@ -16,9 +16,11 @@ export const Select = (props: SelectProps) => {
   const { options, value, onChange } = props;
 
   useEffect(() => {
-    const option = options.find((opt) => opt.value === value);
-    if (option) select(option);
-  }, []);
+    if (!selected && options) {
+      const option = options.find((opt) => opt.value === value);
+      if (option) select(option);
+    }
+  }, [options]);
 
   useEffect(() => {
     onChange(selected);
@@ -60,6 +62,7 @@ const SelectedValue = (props: ValueContainerProps) => {
       value={value}
       className={styles.selectValue}
       placeholder="Select an option..."
+      readOnly
     />
   );
 };
