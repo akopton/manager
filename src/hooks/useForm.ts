@@ -1,7 +1,6 @@
 import { useFormReducer } from "./useFormReducer";
 import { toast } from "react-toastify";
 import { showToast } from "@/utils/showToast";
-import { ValidationConfig } from "@/components/Forms/AddEventForm";
 
 export type StateErrors = {
   errors: {
@@ -12,6 +11,13 @@ export type StateErrors = {
 export type FormState = {
   [key: string]: any;
 } & StateErrors;
+
+export type ValidationConfig<T> = {
+  [key in keyof T]?: {
+    required?: boolean;
+    dependsOn?: keyof T;
+  };
+};
 
 export const useForm = <T extends FormState>(initialState: T) => {
   const [state, dispatch] = useFormReducer<T>(initialState);
@@ -37,14 +43,12 @@ export const useForm = <T extends FormState>(initialState: T) => {
         const { required, dependsOn } = config;
 
         if (dependsOn && data[dependsOn]) {
-          // Check for required fields based on dependsOn condition
           if (required && !value) {
             validatedFields.push(field);
             handleError(field, true);
             toast.error(`Pole ${field} jest wymagane.`);
           }
         } else {
-          // Check for other required fields
           if (required && !value && !dependsOn) {
             validatedFields.push(field);
             handleError(field, true);
@@ -75,5 +79,10 @@ export const useForm = <T extends FormState>(initialState: T) => {
     });
   };
 
-  return { state, handleValue, onSubmit };
+  const handleInitialData = (data: Omit<T, "errors">) => {
+    const fields = Object.keys(data);
+    fields.forEach((field) => handleValue(field, data[field]));
+  };
+
+  return { state, handleValue, onSubmit, handleInitialData };
 };
