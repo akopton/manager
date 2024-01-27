@@ -78,9 +78,17 @@ const OptionsList = (props: ListProps) => {
     <ul className={styles.selectList}>
       {options.map((opt) =>
         opt.value === selectedOption?.value ? (
-          <SelectedOption label={opt.label} onClick={() => onSelect(opt)} />
+          <SelectedOption
+            label={opt.label}
+            onClick={() => onSelect(opt)}
+            key={opt.value}
+          />
         ) : (
-          <DefaultOption label={opt.label} onClick={() => onSelect(opt)} />
+          <DefaultOption
+            label={opt.label}
+            onClick={() => onSelect(opt)}
+            key={opt.value}
+          />
         ),
       )}
     </ul>
