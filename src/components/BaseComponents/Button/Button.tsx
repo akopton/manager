@@ -15,7 +15,7 @@ type DefaultButton = {
 
 type FormButton = {
   type: "submit";
-  onClick: (e: React.FormEvent) => Promise<void>;
+  onClick: (e: React.FormEvent) => Promise<void> | void;
 };
 
 type ButtonProps = DefaultProps & (DefaultButton | FormButton);
