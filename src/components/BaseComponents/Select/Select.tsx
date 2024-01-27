@@ -30,7 +30,7 @@ export const Select = (props: SelectProps) => {
     <div className={styles.select}>
       <div className={styles.main}>
         <div className={styles.selectValueContainer}>
-          <SelectedValue value={selected?.label || ""} />
+          <SelectedValue value={selected?.label ?? ""} />
           <Button
             onClick={toggleOpen}
             type="button"
@@ -135,7 +135,9 @@ const SelectValuePlaceholder = () => {
         <SelectedValue value="" />
         <Button
           isDisabled
-          onClick={() => {}}
+          onClick={() => {
+            return null;
+          }}
           type="button"
           icon={<MdKeyboardArrowDown />}
           style={{ border: "none" }}

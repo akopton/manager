@@ -3,14 +3,10 @@ import { toast } from "react-toastify";
 import { showToast } from "@/utils/showToast";
 
 export type StateErrors = {
-  errors: {
-    [key: string]: boolean;
-  };
+  errors: Record<string, boolean>;
 };
 
-export type FormState = {
-  [key: string]: any;
-} & StateErrors;
+export type FormState = Record<string, any> & StateErrors;
 
 export type ValidationConfig<T> = {
   [key in keyof T]?: {
@@ -32,7 +28,7 @@ export const useForm = <T extends FormState>(initialState: T) => {
     data: T,
     validationConfig: ValidationConfig<T>,
   ) => {
-    let validatedFields = [];
+    const validatedFields = [];
     const formFields: string[] = Object.keys(data);
 
     formFields.forEach((field) => {

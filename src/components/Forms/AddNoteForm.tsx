@@ -68,9 +68,9 @@ export const AddNoteForm = (props: FormProps) => {
     await saveNote({ ...state });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    onSubmit(e, save, validationConfig);
-    refetchNotes();
+  const handleSubmit = async (e: React.FormEvent) => {
+    await onSubmit(e, save, validationConfig);
+    await refetchNotes();
     back();
   };
 

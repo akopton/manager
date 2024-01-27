@@ -23,6 +23,9 @@
     "plugins": [{ "name": "next" }],
     "incremental": true,
 
+    /* extension */
+    "types": ["chrome"],
+
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
@@ -36,7 +39,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "extension/popup.jsx"
   ],
   "exclude": ["node_modules"]
 }

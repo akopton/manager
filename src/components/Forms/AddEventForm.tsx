@@ -57,9 +57,9 @@ export const AddEventForm = () => {
     await saveEvent({ ...state });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    onSubmit(e, save, validationConfig);
-    refetchEvents();
+  const handleSubmit = async (e: React.FormEvent) => {
+    await onSubmit(e, save, validationConfig);
+    await refetchEvents();
     back();
   };
 
@@ -80,13 +80,13 @@ export const AddEventForm = () => {
         <>
           <Input
             type="number"
-            value={state.timePeriod?.toString() || ""}
+            value={state.timePeriod?.toString() ?? ""}
             onChange={(e) => handleValue("timePeriod", e.currentTarget.value)}
             error={state.errors.timePeriod}
           />
           <Input
             type="date"
-            value={getDateValue(state.endAt || new Date()) || ""}
+            value={getDateValue(state.endAt ?? new Date()) ?? ""}
             onChange={(e) =>
               handleValue("endAt", new Date(e.currentTarget.value))
             }
@@ -96,7 +96,7 @@ export const AddEventForm = () => {
       )}
       <Input
         type="date"
-        value={getDateValue(state.date) || ""}
+        value={getDateValue(state.date) ?? ""}
         onChange={(e) => handleValue("date", new Date(e.currentTarget.value))}
         error={state.errors.date}
       />

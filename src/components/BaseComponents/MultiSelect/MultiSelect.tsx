@@ -84,7 +84,13 @@ const SelectPlaceholder = (props: PlaceholderProps) => {
           ) : (
             <ul className={styles.selectedOptions}>
               {options?.map((opt) => (
-                <SelectedOption {...opt} onClick={() => {}} key={opt.value} />
+                <SelectedOption
+                  {...opt}
+                  onClick={() => {
+                    return null;
+                  }}
+                  key={opt.value}
+                />
               ))}
             </ul>
           )}

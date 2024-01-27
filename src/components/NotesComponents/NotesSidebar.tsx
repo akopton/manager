@@ -29,17 +29,16 @@ export const NotesSidebar = () => {
           <AddNotesListForm closeForm={() => setIsFormOpened(false)} />
         )}
       </div>
-      {lists &&
-        lists.map((list) => (
-          <NotesList
-            id={list.id}
-            title={list.name}
-            data={list.notes}
-            key={list.id}
-            openList={openList}
-            isOpened={list.isOpened}
-          />
-        ))}
+      {lists?.map((list) => (
+        <NotesList
+          id={list.id}
+          title={list.name}
+          data={list.notes}
+          key={list.id}
+          openList={openList}
+          isOpened={list.isOpened}
+        />
+      ))}
     </aside>
   );
 };

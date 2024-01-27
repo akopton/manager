@@ -37,7 +37,8 @@ export default function NotesPage() {
               <span>text: {note.text}</span>
               <span>listId: {note.listId}</span>
               <div>
-                sharedWith: {note?.sharedWith.map((el) => <span>{el.id}</span>)}
+                sharedWith:{" "}
+                {note?.sharedWith.map((el) => <span key={el.id}>{el.id}</span>)}
               </div>
             </div>
           )}
