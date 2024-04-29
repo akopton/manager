@@ -1,7 +1,7 @@
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { Button } from "../BaseComponents/Button/Button";
-import { List } from "../BaseComponents/List/List";
-import { ListItem } from "../BaseComponents/ListItem/ListItem";
+import { Button } from "../../components/BaseComponents/Button/Button";
+import { List } from "../../components/BaseComponents/List/List";
+import { ListItem } from "../../components/BaseComponents/ListItem/ListItem";
 import { useCallback, useEffect, useState } from "react";
 import { Note } from "@prisma/client";
 import Link from "next/link";

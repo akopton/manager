@@ -1,5 +1,5 @@
 import { Button } from "@/components/BaseComponents/Button/Button";
-import { NotesLayout } from "@/components/Layouts/NotesLayout";
+import { NotesLayout } from "@/components_old/Layouts/NotesLayout";
 import { api } from "@/utils/api";
 import Head from "next/head";
 import { useRouter } from "next/router";

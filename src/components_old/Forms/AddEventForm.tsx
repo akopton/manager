@@ -1,6 +1,6 @@
-import { Form } from "../BaseComponents/Form/Form";
-import { Input } from "../BaseComponents/Input/Input";
-import { Button } from "../BaseComponents/Button/Button";
+import { Form } from "../../components/BaseComponents/Form/Form";
+import { Input } from "../../components/BaseComponents/Input/Input";
+import { Button } from "../../components/BaseComponents/Button/Button";
 import { ValidationConfig, useForm } from "@/hooks/useForm";
 import { api } from "@/utils/api";
 import React from "react";

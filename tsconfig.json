@@ -40,7 +40,8 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts",
-    "extension/popup.jsx"
+    "extension/popup.jsx",
+    "extension/extension.mjs"
   ],
   "exclude": ["node_modules"]
 }

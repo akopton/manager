@@ -5,7 +5,7 @@ import { type AppType } from "next/app";
 import { api } from "@/utils/api";
 
 import "@/styles/globals.css";
-import { MainLayout } from "@/components/Layouts/MainLayout";
+import { MainLayout } from "@/components_old/Layouts/MainLayout";
 import { ThemeContextProvider } from "@/context/ThemeContext";
 import { useRouter } from "next/router";
 

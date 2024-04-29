@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { List } from "../BaseComponents/List/List";
-import { ListItem } from "../BaseComponents/ListItem/ListItem";
-import { Button } from "../BaseComponents/Button/Button";
+import { List } from "../../components/BaseComponents/List/List";
+import { ListItem } from "../../components/BaseComponents/ListItem/ListItem";
+import { Button } from "../../components/BaseComponents/Button/Button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useThemeContext } from "@/hooks/useThemeContext";
-import { ToggleThemeBtn } from "../BaseComponents/ToggleThemeBtn/ToggleThemeBtn";
+import { ToggleThemeBtn } from "../../components/BaseComponents/ToggleThemeBtn/ToggleThemeBtn";
 
 export const Nav = () => {
   const navItems = [

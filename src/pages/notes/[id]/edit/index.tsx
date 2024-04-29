@@ -1,5 +1,5 @@
-import { AddNoteForm } from "@/components/Forms/AddNoteForm";
-import { NotesLayout } from "@/components/Layouts/NotesLayout";
+import { AddNoteForm } from "@/components_old/Forms/AddNoteForm";
+import { NotesLayout } from "@/components_old/Layouts/NotesLayout";
 import { api } from "@/utils/api";
 import { Note, User } from "@prisma/client";
 import Head from "next/head";

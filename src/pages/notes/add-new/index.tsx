@@ -1,5 +1,5 @@
-import { AddNoteForm } from "@/components/Forms/AddNoteForm";
-import { NotesLayout } from "@/components/Layouts/NotesLayout";
+import { AddNoteForm } from "@/components_old/Forms/AddNoteForm";
+import { NotesLayout } from "@/components_old/Layouts/NotesLayout";
 import Head from "next/head";
 
 export default function AddNotePage() {

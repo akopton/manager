@@ -1,4 +1,4 @@
-import { NotesLayout } from "@/components/Layouts/NotesLayout";
+import { NotesLayout } from "@/components_old/Layouts/NotesLayout";
 import Head from "next/head";
 
 export default function NotesPage() {

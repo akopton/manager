@@ -1,5 +1,5 @@
-import { NotesList } from "../NotesComponents/NotesList";
-import { Button } from "../BaseComponents/Button/Button";
+import { NotesList } from "./NotesList";
+import { Button } from "../../components/BaseComponents/Button/Button";
 import { AddNotesListForm } from "../Forms/AddNotesListForm";
 import { useNotesLists } from "@/hooks/useNotesLists";
 import { useState } from "react";

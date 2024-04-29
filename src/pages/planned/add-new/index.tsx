@@ -1,4 +1,4 @@
-import { AddEventForm } from "@/components/Forms/AddEventForm";
+import { AddEventForm } from "@/components_old/Forms/AddEventForm";
 import Head from "next/head";
 
 export default function AddEventPage() {
